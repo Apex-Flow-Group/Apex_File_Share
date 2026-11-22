@@ -1,31 +1,37 @@
 import 'dart:async';
 
 import 'package:apex_file_share/mobile/widgets/home_sidebar.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Owner request: the sidebar actions light up when pressed and stay lit
 /// while what they opened is open (Settings and About open a bottom sheet);
 /// Refresh spins its icon until the refresh is done.
 void main() {
-  Widget host(Widget tile) => MaterialApp(home: Scaffold(body: SizedBox(width: 240, child: tile)));
+  Widget host(Widget tile) =>
+      MaterialApp(home: Scaffold(body: SizedBox(width: 240, child: tile)));
 
   Color? background(WidgetTester tester) {
     final box = tester.widget<AnimatedContainer>(find.descendant(
-        of: find.byType(SidebarActionTile), matching: find.byType(AnimatedContainer)));
+        of: find.byType(SidebarActionTile),
+        matching: find.byType(AnimatedContainer)));
     return (box.decoration as BoxDecoration?)?.color;
   }
 
   double turns(WidgetTester tester) => tester
       .widget<RotationTransition>(find.descendant(
-          of: find.byType(SidebarActionTile), matching: find.byType(RotationTransition)))
+          of: find.byType(SidebarActionTile),
+          matching: find.byType(RotationTransition)))
       .turns
       .value;
 
-  testWidgets('lit while what it opened is open, and not after', (tester) async {
+  testWidgets('lit while what it opened is open, and not after',
+      (tester) async {
     final sheet = Completer<void>();
     await tester.pumpWidget(host(SidebarActionTile(
-        icon: Icons.settings_rounded, label: 'Settings', onTap: () => sheet.future)));
+        icon: Icons.settings_rounded,
+        label: 'Settings',
+        onTap: () => sheet.future)));
     final idle = background(tester);
 
     await tester.tap(find.text('Settings'));
@@ -37,7 +43,8 @@ void main() {
     expect(background(tester), idle, reason: 'the sheet closed');
   });
 
-  testWidgets('Refresh spins until the refresh is done, then stops', (tester) async {
+  testWidgets('Refresh spins until the refresh is done, then stops',
+      (tester) async {
     final refresh = Completer<void>();
     await tester.pumpWidget(host(SidebarActionTile(
         icon: Icons.restart_alt_rounded,
@@ -71,7 +78,8 @@ void main() {
     expect(turns(tester), 0);
   });
 
-  testWidgets('a second press while busy does not run it twice', (tester) async {
+  testWidgets('a second press while busy does not run it twice',
+      (tester) async {
     var runs = 0;
     final sheet = Completer<void>();
     await tester.pumpWidget(host(SidebarActionTile(

@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:apex_file_share/core/core_models.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/screens/home_dialogs.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A second file arriving replaces the "file received" sheet. It used to
 /// close whatever was on top: with Settings opened over the first sheet,
@@ -45,30 +46,35 @@ void main() {
   Future<void> start(WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(
       locale: Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: _Host(),
     ));
   }
 
-  testWidgets('a second file replaces the sheet and leaves Settings open', (tester) async {
+  testWidgets('a second file replaces the sheet and leaves Settings open',
+      (tester) async {
     await start(tester);
     _host.showFileReceivedSheet(_file('first.txt'));
     await tester.pumpAndSettle();
     expect(find.text('first.txt'), findsOneWidget);
 
     unawaited(showModalBottomSheet<void>(
-        context: _host.context, builder: (_) => const SizedBox(height: 200, child: Text('SETTINGS'))));
+        context: _host.context,
+        builder: (_) => const SizedBox(height: 200, child: Text('SETTINGS'))));
     await tester.pumpAndSettle();
 
     _host.showFileReceivedSheet(_file('second.txt'));
     await tester.pumpAndSettle();
-    expect(find.text('SETTINGS'), findsOneWidget, reason: 'Settings was not what arrived');
-    expect(find.text('first.txt'), findsNothing, reason: 'the old sheet is replaced');
+    expect(find.text('SETTINGS'), findsOneWidget,
+        reason: 'Settings was not what arrived');
+    expect(find.text('first.txt'), findsNothing,
+        reason: 'the old sheet is replaced');
     expect(find.text('second.txt'), findsOneWidget);
   });
 
-  testWidgets('with nothing over it, a second file still replaces the sheet', (tester) async {
+  testWidgets('with nothing over it, a second file still replaces the sheet',
+      (tester) async {
     await start(tester);
     _host.showFileReceivedSheet(_file('first.txt'));
     await tester.pumpAndSettle();
@@ -78,7 +84,8 @@ void main() {
     expect(find.text('second.txt'), findsOneWidget);
   });
 
-  testWidgets('after the sheet is closed, a new file does not close anything else',
+  testWidgets(
+      'after the sheet is closed, a new file does not close anything else',
       (tester) async {
     await start(tester);
     _host.showFileReceivedSheet(_file('first.txt'));
@@ -87,7 +94,8 @@ void main() {
     await tester.pumpAndSettle();
 
     unawaited(showModalBottomSheet<void>(
-        context: _host.context, builder: (_) => const SizedBox(height: 200, child: Text('SETTINGS'))));
+        context: _host.context,
+        builder: (_) => const SizedBox(height: 200, child: Text('SETTINGS'))));
     await tester.pumpAndSettle();
     _host.showFileReceivedSheet(_file('second.txt'));
     await tester.pumpAndSettle();

@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:apex_file_share/core/share_folder_http.dart';
 import 'package:apex_file_share/features/identity/pin_store.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/screens/share_browser_screen.dart';
 import 'package:apex_file_share/models/device.dart';
 import 'package:apex_file_share/services/share_folder_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../identity/tls_peer.dart';
 
@@ -71,23 +72,32 @@ void main() {
   Future<void> open(WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       locale: const Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: ShareBrowserScreen(
         device: Device(
-            id: 'pc', name: 'Office PC', type: 'desktop', ip: '127.0.0.1', port: server.port, fingerprint: testReceiver.fingerprint),
+            id: 'pc',
+            name: 'Office PC',
+            type: 'desktop',
+            ip: '127.0.0.1',
+            port: server.port,
+            fingerprint: testReceiver.fingerprint),
         clientContext: senderContext(),
         localId: 'phone',
       ),
     ));
-    for (var i = 0; i < 50 && find.byType(CircularProgressIndicator).evaluate().isNotEmpty; i++) {
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    for (var i = 0;
+        i < 50 && find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
+        i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)));
       // The TLS handshake runs on timers, which only move when time does.
       await tester.pump(const Duration(milliseconds: 10));
     }
   }
 
-  testWidgets('when the other user agrees, the folder is listed', (tester) async {
+  testWidgets('when the other user agrees, the folder is listed',
+      (tester) async {
     answer = true;
     await open(tester);
     expect(asked, 1);
@@ -95,7 +105,8 @@ void main() {
     expect(find.byIcon(Icons.upload_rounded), findsOneWidget);
   });
 
-  testWidgets('when the other user agreed to downloads only, there is no upload button',
+  testWidgets(
+      'when the other user agreed to downloads only, there is no upload button',
       (tester) async {
     answer = true;
     uploads = false;
@@ -105,29 +116,36 @@ void main() {
         reason: 'The upload would be sent whole and then refused.');
   });
 
-  testWidgets('when the other user refuses, the screen says so', (tester) async {
+  testWidgets('when the other user refuses, the screen says so',
+      (tester) async {
     answer = false;
     await open(tester);
     expect(asked, 1);
     expect(find.text('report.pdf'), findsNothing);
-    expect(find.text('The owner of the other device refused to open their shared folder'),
+    expect(
+        find.text(
+            'The owner of the other device refused to open their shared folder'),
         findsOneWidget);
     expect(find.text('Device unreachable'), findsNothing,
         reason: 'The device answered; it is reachable.');
   });
 
-  testWidgets('when the other user does not answer, the screen does not say refused',
+  testWidgets(
+      'when the other user does not answer, the screen does not say refused',
       (tester) async {
     answer = null;
     await open(tester);
-    expect(find.text('The owner of the other device did not answer'), findsOneWidget);
+    expect(find.text('The owner of the other device did not answer'),
+        findsOneWidget);
   });
 
-  testWidgets('when the folder is off there, the screen says so, not "update"', (tester) async {
+  testWidgets('when the folder is off there, the screen says so, not "update"',
+      (tester) async {
     answer = true;
     enabled = false;
     await open(tester);
     expect(asked, 0);
-    expect(find.text('The shared folder is not enabled on the other device'), findsOneWidget);
+    expect(find.text('The shared folder is not enabled on the other device'),
+        findsOneWidget);
   });
 }

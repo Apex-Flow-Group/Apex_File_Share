@@ -1,8 +1,9 @@
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/widgets/tabs/send_tab.dart';
 import 'package:apex_file_share/tv/widgets/tabs/tv_send_tab.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// With no device to show, the send tab says the start state: a search that
 /// never began is not "no devices", and a failed start offers a retry
@@ -12,7 +13,7 @@ void main() {
 
   Widget app(Widget child) => MaterialApp(
         locale: const Locale('ar'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: child),
       );
@@ -39,7 +40,8 @@ void main() {
   };
 
   for (final MapEntry(key: name, value: tab) in tabs.entries) {
-    testWidgets('$name: while starting it says so, not that none were found', (tester) async {
+    testWidgets('$name: while starting it says so, not that none were found',
+        (tester) async {
       await tester.pumpWidget(app(tab(false, () {})));
       await tester.pump();
       expect(find.text(ar.starting), findsOneWidget);
@@ -47,7 +49,8 @@ void main() {
       expect(find.text(ar.retry), findsNothing);
     });
 
-    testWidgets('$name: a failed start says it and offers a retry', (tester) async {
+    testWidgets('$name: a failed start says it and offers a retry',
+        (tester) async {
       var retries = 0;
       await tester.pumpWidget(app(tab(true, () => retries++)));
       await tester.pump();

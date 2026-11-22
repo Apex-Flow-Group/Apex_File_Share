@@ -1,6 +1,6 @@
 import 'package:apex_file_share/services/settings_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -28,7 +28,7 @@ void main() {
     test('setLocale with null removes locale', () async {
       await service.setLocale(const Locale('ar'));
       await service.setLocale(null);
-      
+
       expect(service.locale, null);
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.containsKey('locale_language'), false);

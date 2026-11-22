@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:apex_file_share/shared/apex_colors.dart';
 import 'package:apex_file_share/shared/apex_theme.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The bars, the sidebars and the device card take their colours from the
 /// theme's roles (owner decision): a number in one of them is a colour the
@@ -20,7 +20,8 @@ const _themed = [
 
 /// One icon per action on every device (owner decision): named only in
 /// lib/shared/apex_icons.dart.
-final _actionIcons = RegExp(r'\bIcons\.(star_rounded|star_border_rounded|folder_shared_rounded|'
+final _actionIcons = RegExp(
+    r'\bIcons\.(star_rounded|star_border_rounded|folder_shared_rounded|'
     r'block_rounded|expand_less_rounded|upload_file_rounded|send_rounded|send_outlined|'
     r'more_horiz_rounded|smartphone_outlined|folder_outlined|settings_outlined)\b');
 
@@ -49,9 +50,11 @@ void main() {
 
   test('an action icon is named only in the icons table', () {
     final found = <String>[];
-    for (final f in Directory('lib').listSync(recursive: true).whereType<File>()) {
+    for (final f
+        in Directory('lib').listSync(recursive: true).whereType<File>()) {
       final path = f.path.replaceAll(r'\', '/');
-      if (!path.endsWith('.dart') || path.endsWith('lib/shared/apex_icons.dart')) {
+      if (!path.endsWith('.dart') ||
+          path.endsWith('lib/shared/apex_icons.dart')) {
         continue;
       }
       for (final (i, line) in f.readAsLinesSync().indexed) {
@@ -63,9 +66,11 @@ void main() {
     expect(found, isEmpty);
   });
 
-  test('the device card is one file for the phone, the computer and the TV', () {
+  test('the device card is one file for the phone, the computer and the TV',
+      () {
     final defines = <String>[];
-    for (final f in Directory('lib').listSync(recursive: true).whereType<File>()) {
+    for (final f
+        in Directory('lib').listSync(recursive: true).whereType<File>()) {
       if (f.readAsStringSync().contains('class DeviceCard ')) {
         defines.add(f.path.replaceAll(r'\', '/'));
       }
@@ -85,7 +90,8 @@ void main() {
 
   for (final brightness in Brightness.values) {
     group(brightness.name, () {
-      final c = brightness == Brightness.dark ? ApexColors.dark : ApexColors.light;
+      final c =
+          brightness == Brightness.dark ? ApexColors.dark : ApexColors.light;
 
       test('the theme carries the roles, its surfaces on the same steps', () {
         final theme = apexTheme(brightness);

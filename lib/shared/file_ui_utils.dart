@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// دوال مشتركة لعرض معلومات الملفات — تستخدم في Mobile و TV
 class FileUiUtils {

@@ -1,15 +1,17 @@
 import 'package:apex_file_share/core/apex_core.dart';
 import 'package:apex_file_share/features/chat/logic/chat_key.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/screens/home_dialogs.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Owner decision: the received sheet opens the sender's chat, where the
 // file's line opens the file and its folder, not the files tab.
 final _fp = 'a' * 64;
 
-FileReceivedEvent _overNetwork(String name, {int total = 1}) => FileReceivedEvent(
+FileReceivedEvent _overNetwork(String name, {int total = 1}) =>
+    FileReceivedEvent(
       fileName: name,
       fileSize: 5,
       fromDevice: 'Office PC',
@@ -64,14 +66,15 @@ void main() {
     const locale = Locale('ar');
     await tester.pumpWidget(const MaterialApp(
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: _Host(),
     ));
     return AppLocalizations.delegate.load(locale);
   }
 
-  testWidgets('a file from a network device: the sheet opens its chat', (tester) async {
+  testWidgets('a file from a network device: the sheet opens its chat',
+      (tester) async {
     final l10n = await start(tester);
     final event = _overNetwork('report.pdf');
     ApexCore.instance.chat.receivedFile(event);
@@ -98,7 +101,8 @@ void main() {
 
   // Arabic review: the chat opens in its device's card, so with the device
   // gone from the list the button showed an empty send tab.
-  testWidgets('its device gone from the list: the sheet opens the folder', (tester) async {
+  testWidgets('its device gone from the list: the sheet opens the folder',
+      (tester) async {
     final l10n = await start(tester);
     final event = _overNetwork('late.pdf');
     ApexCore.instance.chat.receivedFile(event);
@@ -112,10 +116,14 @@ void main() {
     expect(_host.chats, isEmpty);
   });
 
-  testWidgets('over Nearby there is no chat: the sheet still opens the folder', (tester) async {
+  testWidgets('over Nearby there is no chat: the sheet still opens the folder',
+      (tester) async {
     final l10n = await start(tester);
-    _host.showFileReceivedSheet(
-        FileReceivedEvent(fileName: 'n.jpg', fileSize: 5, fromDevice: 'Ali Phone', filePath: '/tmp/n.jpg'));
+    _host.showFileReceivedSheet(FileReceivedEvent(
+        fileName: 'n.jpg',
+        fileSize: 5,
+        fromDevice: 'Ali Phone',
+        filePath: '/tmp/n.jpg'));
     await tester.pumpAndSettle();
     expect(find.text(l10n.chatOpen), findsNothing);
     await tester.tap(find.text(l10n.openFolder));

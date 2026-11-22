@@ -3,15 +3,17 @@ import 'package:apex_file_share/features/chat/logic/chat_key.dart';
 import 'package:apex_file_share/features/chat/logic/chat_store.dart';
 import 'package:apex_file_share/features/chat/ui/device_chat_view.dart';
 import 'package:apex_file_share/features/send/data/send_http.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/models/device.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Any certificate's fingerprint: these tests are about tokens, not identity.
 const _fp = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-const _pc = Device(id: 'p', name: 'Office PC', type: 'desktop', ip: '10.0.0.7', port: 4000);
+const _pc = Device(
+    id: 'p', name: 'Office PC', type: 'desktop', ip: '10.0.0.7', port: 4000);
 
 void main() {
   group('the door', () {
@@ -30,7 +32,8 @@ void main() {
         ..block(_pc.chatPeer)
         ..unblock(_pc.chatPeer);
       expect(access.isBlocked(_pc.chatPeer), isFalse);
-      expect(access.check(token, _pc.chatKey), isNull, reason: 'the old token stays dead');
+      expect(access.check(token, _pc.chatKey), isNull,
+          reason: 'the old token stays dead');
     });
 
     test('blocking one device leaves the others alone', () {
@@ -89,7 +92,9 @@ void main() {
       expect(sent, ['back']);
     });
 
-    test('a refusal at the question shows as blocked, without calling the door back', () {
+    test(
+        'a refusal at the question shows as blocked, without calling the door back',
+        () {
       var notified = 0;
       store.addListener(() => notified++);
       store.blocked(_pc.chatPeer);
@@ -99,25 +104,30 @@ void main() {
     });
   });
 
-  Future<AppLocalizations> show(WidgetTester tester, ChatStore store, {required bool canWrite}) async {
+  Future<AppLocalizations> show(WidgetTester tester, ChatStore store,
+      {required bool canWrite}) async {
     const locale = Locale('ar');
     await tester.pumpWidget(MaterialApp(
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: DeviceChatView(store: store, device: _pc, canWrite: canWrite)),
+      home: Scaffold(
+          body: DeviceChatView(store: store, device: _pc, canWrite: canWrite)),
     ));
     return AppLocalizations.delegate.load(locale);
   }
 
   ChatStore blockedStore() {
-    final store = ChatStore(send: (t, d, k) async => (outcome: ChatOutcome.sent, token: null));
+    final store = ChatStore(
+        send: (t, d, k) async => (outcome: ChatOutcome.sent, token: null));
     store.receive(_pc.chatPeer, 'PC', 'hello');
     store.block(_pc.chatPeer);
     return store;
   }
 
-  testWidgets('a blocked chat says so, has no writing line, and can be unblocked', (tester) async {
+  testWidgets(
+      'a blocked chat says so, has no writing line, and can be unblocked',
+      (tester) async {
     final store = blockedStore();
     final l10n = await show(tester, store, canWrite: true);
     expect(find.text(l10n.chatBlocked), findsOneWidget);
@@ -128,7 +138,9 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
   });
 
-  testWidgets('on the TV the chat says it is blocked, and unblocks there as everywhere', (tester) async {
+  testWidgets(
+      'on the TV the chat says it is blocked, and unblocks there as everywhere',
+      (tester) async {
     final store = blockedStore();
     final l10n = await show(tester, store, canWrite: false);
     expect(find.text(l10n.chatBlocked), findsOneWidget);

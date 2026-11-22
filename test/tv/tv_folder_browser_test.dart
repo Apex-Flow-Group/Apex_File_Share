@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/tv/widgets/tv_file_browser.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Choosing a folder to send with the TV remote, inside the app's own browser.
 void main() {
@@ -23,7 +24,7 @@ void main() {
 
   Widget host(Locale locale) => MaterialApp(
         locale: locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
@@ -31,7 +32,8 @@ void main() {
               child: TextButton(
                 autofocus: true,
                 onPressed: () async {
-                  picked = await showTVFolderBrowser(context, root: root.path, list: _listNow);
+                  picked = await showTVFolderBrowser(context,
+                      root: root.path, list: _listNow);
                   closed = true;
                 },
                 child: const Text('open'),
@@ -54,12 +56,15 @@ void main() {
   }
 
   for (final locale in const [Locale('ar'), Locale('en')]) {
-    testWidgets('the remote opens a folder and sends it ($locale)', (tester) async {
+    testWidgets('the remote opens a folder and sends it ($locale)',
+        (tester) async {
       await open(tester, locale);
-      await press(tester, LogicalKeyboardKey.select); // folders come first: open Photos
+      await press(
+          tester, LogicalKeyboardKey.select); // folders come first: open Photos
       expect(find.text('a.jpg'), findsOneWidget);
       await press(tester, LogicalKeyboardKey.arrowDown); // .. -> a.jpg
-      await press(tester, LogicalKeyboardKey.arrowDown); // a.jpg -> send this folder
+      await press(
+          tester, LogicalKeyboardKey.arrowDown); // a.jpg -> send this folder
       await press(tester, LogicalKeyboardKey.select);
       expect(closed, isTrue);
       expect(_slashes(picked), _slashes('${root.path}/Photos'));
@@ -74,7 +79,8 @@ void main() {
     expect(closed, isFalse);
   });
 
-  testWidgets('at the storage root the title and button say what to do', (tester) async {
+  testWidgets('at the storage root the title and button say what to do',
+      (tester) async {
     await open(tester, const Locale('ar'));
     final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
     expect(find.text(l10n.storageLabel), findsOneWidget,
@@ -96,12 +102,14 @@ void main() {
   });
 
   // The remote's Back reaches the app as a route pop, not as a key.
-  testWidgets('Back leaves the folder, then closes without sending', (tester) async {
+  testWidgets('Back leaves the folder, then closes without sending',
+      (tester) async {
     await open(tester, const Locale('ar'));
     await press(tester, LogicalKeyboardKey.select); // open Photos
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('notes.txt'), findsOneWidget, reason: 'Back goes up one folder');
+    expect(find.text('notes.txt'), findsOneWidget,
+        reason: 'Back goes up one folder');
     expect(closed, isFalse);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -109,17 +117,18 @@ void main() {
     expect(picked, isNull);
   });
 
-  testWidgets('in file mode the list leads down to the send button', (tester) async {
+  testWidgets('in file mode the list leads down to the send button',
+      (tester) async {
     late List<String>? files;
     await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Builder(
         builder: (context) => Scaffold(
           body: TextButton(
             autofocus: true,
-            onPressed: () async =>
-                files = await showTVFileBrowser(context, root: root.path, list: _listNow),
+            onPressed: () async => files = await showTVFileBrowser(context,
+                root: root.path, list: _listNow),
             child: const Text('open'),
           ),
         ),

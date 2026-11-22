@@ -1,7 +1,8 @@
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/widgets/delete_files_sheet.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Deleting always deletes, after one confirmation. The sheet once had a
 /// switch that, left off, "deleted" files that stayed in the list.
@@ -10,7 +11,7 @@ void main() {
     late BuildContext ctx;
     await tester.pumpWidget(MaterialApp(
       locale: Locale(lang),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Builder(builder: (c) {
         ctx = c;
@@ -22,7 +23,8 @@ void main() {
     return result;
   }
 
-  testWidgets('the sheet has no switch and deleting confirms with true', (tester) async {
+  testWidgets('the sheet has no switch and deleting confirms with true',
+      (tester) async {
     final result = await open(tester, 3, 'en');
     expect(find.byType(Switch), findsNothing);
     expect(find.text('Delete 3 files?'), findsOneWidget);

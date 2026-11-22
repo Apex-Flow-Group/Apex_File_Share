@@ -1,8 +1,9 @@
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/widgets/home_sidebar.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Owner request: the desktop sidebar like his reference, rows lit on hover,
 // and a fold button that leaves the icons alone.
@@ -15,7 +16,7 @@ void main() {
     const locale = Locale('ar');
     await tester.pumpWidget(MaterialApp(
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: Row(children: [

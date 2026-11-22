@@ -1,13 +1,15 @@
 import 'package:apex_file_share/shared/apex_snackbar.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Owner request: on a desktop window the snackbar stretched across the whole
 /// window. On a wide window it is centered at Material's snackbar width
 /// (344 to 672); on a phone it stays full width with its margins.
 void main() {
   // The visible card, not the full-width box that positions it.
-  final surface = find.descendant(of: find.byType(SnackBar), matching: find.byType(Material)).first;
+  final surface = find
+      .descendant(of: find.byType(SnackBar), matching: find.byType(Material))
+      .first;
 
   Future<Rect> shown(WidgetTester tester, Size window) async {
     tester.view.physicalSize = window;
@@ -51,8 +53,8 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (context) =>
-                TextButton(onPressed: () => show.value(context), child: const Text('go')),
+            builder: (context) => TextButton(
+                onPressed: () => show.value(context), child: const Text('go')),
           ),
         ),
       ));

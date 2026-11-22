@@ -1,14 +1,20 @@
 import 'package:apex_file_share/features/chat/ui/device_chat_view.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/widgets/connection_widget.dart';
 import 'package:apex_file_share/models/device.dart';
 import 'package:apex_file_share/shared/device_card.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Owner decision: back goes one step at a time. The system closes the
 // keyboard itself; then back leaves the box, then folds the card.
-const _pc = Device(id: 'p', name: 'Office PC', type: 'desktop', ip: '192.168.8.97', port: 4000);
+const _pc = Device(
+    id: 'p',
+    name: 'Office PC',
+    type: 'desktop',
+    ip: '192.168.8.97',
+    port: 4000);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,10 +26,11 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(MaterialApp(
       locale: const Locale('ar'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        body: SingleChildScrollView(child: ConnectionWidget(device: _pc, onPin: () {})),
+        body: SingleChildScrollView(
+            child: ConnectionWidget(device: _pc, onPin: () {})),
       ),
     ));
     await tester.pump();
@@ -34,7 +41,8 @@ void main() {
   bool writing(WidgetTester tester) =>
       tester.widget<TextField>(find.byType(TextField)).focusNode!.hasFocus;
 
-  testWidgets('back first leaves the box and keeps the card open', (tester) async {
+  testWidgets('back first leaves the box and keeps the card open',
+      (tester) async {
     await open(tester);
     await tester.tap(find.byType(TextField));
     await tester.pump();
@@ -51,6 +59,7 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byType(DeviceChatView), findsNothing);
-    expect(find.text('Office PC'), findsOneWidget, reason: 'the folded row is still there');
+    expect(find.text('Office PC'), findsOneWidget,
+        reason: 'the folded row is still there');
   });
 }

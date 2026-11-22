@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'core/apex_core.dart';
+import 'l10n/app_delegates.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'managers/permission_manager.dart';
 import 'mobile/screens/home_screen.dart';
@@ -29,7 +30,7 @@ class _BootApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       theme: apexTheme(Brightness.light),
       darkTheme: apexTheme(Brightness.dark),
       themeMode: ThemeMode.system,
@@ -81,7 +82,7 @@ class FileShareApp extends StatelessWidget {
             return supportedLocales.first;
           },
           supportedLocales: const [Locale('ar'), Locale('en')],
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           theme: apexTheme(Brightness.light),
           darkTheme: apexTheme(Brightness.dark),
           themeMode: settings.themeMode,

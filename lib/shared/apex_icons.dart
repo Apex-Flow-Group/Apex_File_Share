@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One icon for each action and page, on the phone, the computer and the TV
 /// (owner decision): the same action drawn two ways reads as two actions. A

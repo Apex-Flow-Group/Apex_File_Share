@@ -3,12 +3,14 @@ import 'package:apex_file_share/features/chat/logic/chat_key.dart';
 import 'package:apex_file_share/features/chat/logic/chat_store.dart';
 import 'package:apex_file_share/features/chat/ui/device_chat_view.dart';
 import 'package:apex_file_share/features/send/data/send_http.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/models/device.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-const _pc = Device(id: 'p', name: 'Office PC', type: 'desktop', ip: '10.0.0.7', port: 4000);
+const _pc = Device(
+    id: 'p', name: 'Office PC', type: 'desktop', ip: '10.0.0.7', port: 4000);
 
 void main() {
   late List<String> sent;
@@ -24,13 +26,15 @@ void main() {
     });
   });
 
-  Future<AppLocalizations> show(WidgetTester tester, {required bool canWrite}) async {
+  Future<AppLocalizations> show(WidgetTester tester,
+      {required bool canWrite}) async {
     const locale = Locale('ar');
     await tester.pumpWidget(MaterialApp(
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: DeviceChatView(store: store, device: _pc, canWrite: canWrite)),
+      home: Scaffold(
+          body: DeviceChatView(store: store, device: _pc, canWrite: canWrite)),
     ));
     return AppLocalizations.delegate.load(locale);
   }
@@ -50,7 +54,8 @@ void main() {
     expect(find.text(l10n.chatCopy), findsNothing);
   });
 
-  testWidgets('an empty line sends nothing; a written one is sent and cleared', (tester) async {
+  testWidgets('an empty line sends nothing; a written one is sent and cleared',
+      (tester) async {
     final l10n = await show(tester, canWrite: true);
     await tester.tap(find.bySemanticsLabel(l10n.send));
     await tester.pump();
@@ -61,17 +66,21 @@ void main() {
     await tester.tap(find.bySemanticsLabel(l10n.send));
     await tester.pumpAndSettle();
     expect(sent, ['hi there']);
-    expect(find.text('hi there'), findsOneWidget, reason: 'in the chat, no longer in the line');
+    expect(find.text('hi there'), findsOneWidget,
+        reason: 'in the chat, no longer in the line');
   });
 
-  Future<void> write(WidgetTester tester, AppLocalizations l10n, String text) async {
+  Future<void> write(
+      WidgetTester tester, AppLocalizations l10n, String text) async {
     await tester.enterText(find.byType(TextField), text);
     await tester.pump();
     await tester.tap(find.bySemanticsLabel(l10n.send));
     await tester.pumpAndSettle();
   }
 
-  testWidgets('a message that did not arrive shows why, and resends only when asked', (tester) async {
+  testWidgets(
+      'a message that did not arrive shows why, and resends only when asked',
+      (tester) async {
     answer = ChatOutcome.busy;
     final l10n = await show(tester, canWrite: true);
     await write(tester, l10n, 'hello');
@@ -86,7 +95,8 @@ void main() {
   });
 
   for (final outcome in [ChatOutcome.declined, ChatOutcome.updateRequired]) {
-    testWidgets('no retry where it would fail the same way again ($outcome)', (tester) async {
+    testWidgets('no retry where it would fail the same way again ($outcome)',
+        (tester) async {
       answer = outcome;
       final l10n = await show(tester, canWrite: true);
       await write(tester, l10n, 'hello');
@@ -94,14 +104,17 @@ void main() {
     });
   }
 
-  testWidgets('a text over the limit stays in the line, whole, and is not sent', (tester) async {
+  testWidgets('a text over the limit stays in the line, whole, and is not sent',
+      (tester) async {
     final l10n = await show(tester, canWrite: true);
     final long = 'a' * (TransferRules.chatTextLimit + 5);
     await write(tester, l10n, long);
     expect(sent, isEmpty);
-    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, long,
+    expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text, long,
         reason: 'nothing cut off unseen');
-    expect(find.text(l10n.chatTooLong(TransferRules.chatTextLimit)), findsOneWidget);
+    expect(find.text(l10n.chatTooLong(TransferRules.chatTextLimit)),
+        findsOneWidget);
   });
 
   testWidgets('opening the chat marks its messages read', (tester) async {
@@ -111,14 +124,19 @@ void main() {
     expect(store.unread(_pc.chatKey), 0);
   });
 
-  testWidgets('on the TV a message cannot be selected, since it cannot be copied', (tester) async {
-    final store = ChatStore(send: (t, d, k) async => (outcome: ChatOutcome.sent, token: null));
-    const pc = Device(id: 'p', name: 'PC', type: 'desktop', ip: '10.0.0.7', port: 1);
+  testWidgets(
+      'on the TV a message cannot be selected, since it cannot be copied',
+      (tester) async {
+    final store = ChatStore(
+        send: (t, d, k) async => (outcome: ChatOutcome.sent, token: null));
+    const pc =
+        Device(id: 'p', name: 'PC', type: 'desktop', ip: '10.0.0.7', port: 1);
     store.receive(pc.chatPeer, 'PC', 'hello');
     await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: DeviceChatView(store: store, device: pc, canWrite: false)),
+      home: Scaffold(
+          body: DeviceChatView(store: store, device: pc, canWrite: false)),
     ));
     expect(find.byType(SelectableText), findsNothing);
     expect(find.text('hello'), findsOneWidget);

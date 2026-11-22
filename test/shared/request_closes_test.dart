@@ -10,14 +10,15 @@ import 'package:apex_file_share/features/receive/data/receive_http.dart';
 import 'package:apex_file_share/features/receive/data/receive_store.dart';
 import 'package:apex_file_share/features/receive/logic/nearby_door.dart';
 import 'package:apex_file_share/features/receive/logic/receive_gate.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/screens/home_dialogs.dart';
 import 'package:apex_file_share/models/device.dart';
 import 'package:apex_file_share/services/share_folder_service.dart';
 import 'package:apex_file_share/services/transfer_progress_service.dart';
 import 'package:apex_file_share/tv/widgets/tv_accept_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../features/identity/tls_peer.dart';
 
@@ -26,7 +27,11 @@ import '../features/identity/tls_peer.dart';
 const _wait = Duration(milliseconds: 150);
 
 ConnectionRequest _request(List<bool> answers) => ConnectionRequest(
-      device: const Device(id: 'http:192.168.1.20', name: 'Ali Phone', type: 'unknown', ip: '192.168.1.20'),
+      device: const Device(
+          id: 'http:192.168.1.20',
+          name: 'Ali Phone',
+          type: 'unknown',
+          ip: '192.168.1.20'),
       fileName: 'photo.jpg',
       fileSize: 2048,
       onResponse: answers.add,
@@ -69,7 +74,7 @@ class _PhoneHostState extends State<_PhoneHost> with HomeDialogs {
 
 Widget _app(Widget home) => MaterialApp(
       locale: const Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: home,
     );
@@ -85,7 +90,8 @@ void main() {
         expectedFingerprint: await heardSender(),
         pins: PinStore.memory(),
         gate: ReceiveGate(),
-        store: ReceiveStore(tempFolder: () async => root, place: (t, n) async => t.path),
+        store: ReceiveStore(
+            tempFolder: () async => root, place: (t, n) async => t.path),
         onConnectionRequest: shown.add,
         onFileReceived: (_) {},
         decisionTimeout: _wait,
@@ -99,7 +105,8 @@ void main() {
       });
       try {
         final client = await senderClient();
-        final req = await client.postUrl(Uri.https('127.0.0.1:${server.port}', ApexProtocol.offerPath));
+        final req = await client.postUrl(
+            Uri.https('127.0.0.1:${server.port}', ApexProtocol.offerPath));
         req.headers.set(ApexProtocol.versionHeader, '${ApexProtocol.version}');
         final body = utf8.encode(jsonEncode({
           'id': 'test-phone',
@@ -123,7 +130,9 @@ void main() {
     test('Nearby: no answer to the connection or the offer', () async {
       final shown = <ConnectionRequest>[];
       final door = NearbyDoor(
-          onConnectionRequest: shown.add, send: (_, __) async {}, decisionTimeout: _wait);
+          onConnectionRequest: shown.add,
+          send: (_, __) async {},
+          decisionTimeout: _wait);
       await door.mayConnect('ep1', 'Phone');
       await door.onMessage('ep1', {
         'type': NearbyMessage.offer,
@@ -173,7 +182,8 @@ void main() {
       });
       try {
         final client = await senderClient();
-        final req = await client.postUrl(Uri.https('127.0.0.1:${server.port}', ShareFolderHttp.accessPath));
+        final req = await client.postUrl(
+            Uri.https('127.0.0.1:${server.port}', ShareFolderHttp.accessPath));
         req.headers.set(ApexProtocol.versionHeader, '${ApexProtocol.version}');
         final body = utf8.encode('{"id":"phone"}');
         req.contentLength = body.length;

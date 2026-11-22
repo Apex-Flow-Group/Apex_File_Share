@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:apex_file_share/core/share_folder_http.dart';
 import 'package:apex_file_share/features/identity/pin_store.dart';
+import 'package:apex_file_share/l10n/app_delegates.dart';
 import 'package:apex_file_share/l10n/generated/app_localizations.dart';
 import 'package:apex_file_share/mobile/screens/share_browser_screen.dart';
 import 'package:apex_file_share/models/device.dart';
 import 'package:apex_file_share/services/share_folder_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../identity/tls_peer.dart';
 
@@ -68,42 +69,54 @@ void main() {
   Future<AppLocalizations> open(WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       locale: const Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: ShareBrowserScreen(
         device: Device(
-            id: 'pc', name: 'Office PC', type: 'desktop', ip: '127.0.0.1', port: server.port, fingerprint: testReceiver.fingerprint),
+            id: 'pc',
+            name: 'Office PC',
+            type: 'desktop',
+            ip: '127.0.0.1',
+            port: server.port,
+            fingerprint: testReceiver.fingerprint),
         clientContext: senderContext(),
         localId: 'phone',
         pins: pins,
       ),
     ));
-    for (var i = 0; i < 50 && find.byType(CircularProgressIndicator).evaluate().isNotEmpty; i++) {
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    for (var i = 0;
+        i < 50 && find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
+        i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)));
       // The TLS handshake runs on timers, which only move when time does.
       await tester.pump(const Duration(milliseconds: 10));
     }
     return AppLocalizations.of(tester.element(find.byType(ShareBrowserScreen)));
   }
 
-  testWidgets('a device showing another key than its pin is not asked, and its folder is not opened',
+  testWidgets(
+      'a device showing another key than its pin is not asked, and its folder is not opened',
       (tester) async {
     await tester.runAsync(() => pins.pin('pc', testSender.fingerprint));
     final l10n = await open(tester);
     expect(asked, 0, reason: 'nothing left this device');
     expect(find.text('report.pdf'), findsNothing);
     expect(find.text(l10n.shareNewKey), findsOneWidget);
-    expect(pins.pinned('pc'), testSender.fingerprint, reason: 'the pin is never written over here');
+    expect(pins.pinned('pc'), testSender.fingerprint,
+        reason: 'the pin is never written over here');
   });
 
-  testWidgets('a device with no pin is opened, and the key it showed is pinned', (tester) async {
+  testWidgets('a device with no pin is opened, and the key it showed is pinned',
+      (tester) async {
     await open(tester);
     expect(asked, 1);
     expect(find.text('report.pdf'), findsOneWidget);
     expect(pins.pinned('pc'), testReceiver.fingerprint);
   });
 
-  testWidgets('a device showing its pinned key is opened as before', (tester) async {
+  testWidgets('a device showing its pinned key is opened as before',
+      (tester) async {
     await tester.runAsync(() => pins.pin('pc', testReceiver.fingerprint));
     await open(tester);
     expect(asked, 1);

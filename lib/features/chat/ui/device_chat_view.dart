@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show Bidi;
+import 'package:material_ui/material_ui.dart';
 
 import '../../../core/protocol/transfer_rules.dart';
 import '../../../l10n/generated/app_localizations.dart';
