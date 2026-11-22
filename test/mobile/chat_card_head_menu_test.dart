@@ -44,7 +44,7 @@ void main() {
   testWidgets('the opened head shows no folder, block or star of its own',
       (tester) async {
     final l10n = await open(tester);
-    expect(find.byTooltip(l10n.deviceOptions), findsOneWidget);
+    expect(find.bySemanticsLabel(l10n.deviceOptions), findsOneWidget);
     expect(find.byIcon(Icons.folder_shared_rounded), findsNothing);
     expect(find.byIcon(Icons.block_rounded), findsNothing);
     expect(find.byIcon(Icons.star_border_rounded), findsNothing);
@@ -55,7 +55,7 @@ void main() {
       'its menu holds the shared folder, the favourite and block, block last',
       (tester) async {
     final l10n = await open(tester);
-    await tester.tap(find.byTooltip(l10n.deviceOptions));
+    await tester.tap(find.bySemanticsLabel(l10n.deviceOptions));
     await tester.pumpAndSettle();
     final titles = [l10n.sharedFolder, l10n.pinDevice, l10n.chatBlock];
     final ys = [for (final t in titles) tester.getCenter(find.text(t)).dy];
@@ -81,7 +81,7 @@ void main() {
         findsOneWidget);
     expect(tester.getSize(capsule).height, 48);
 
-    await tester.tap(find.byTooltip(l10n.deviceOptions));
+    await tester.tap(find.bySemanticsLabel(l10n.deviceOptions));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.close_rounded), findsOneWidget);
     await tester.tapAt(const Offset(10, 2300));
@@ -113,7 +113,7 @@ void main() {
   testWidgets('the favourite in the menu pins the device', (tester) async {
     var pinned = 0;
     final l10n = await open(tester, onPin: () => pinned++);
-    await tester.tap(find.byTooltip(l10n.deviceOptions));
+    await tester.tap(find.bySemanticsLabel(l10n.deviceOptions));
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.pinDevice));
     await tester.pumpAndSettle();
@@ -122,7 +122,7 @@ void main() {
 
   testWidgets('block in the menu still asks first', (tester) async {
     final l10n = await open(tester);
-    await tester.tap(find.byTooltip(l10n.deviceOptions));
+    await tester.tap(find.bySemanticsLabel(l10n.deviceOptions));
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.chatBlock));
     await tester.pumpAndSettle();
