@@ -190,10 +190,13 @@ do_build_rpm() {
         sudo dnf install -y "$RPM"
     fi
     # dnf refuses a version older than the installed one without failing here.
-    INSTALLED=$(rpm -q --qf '%{VERSION}-%{RELEASE}' apexsender 2>/dev/null)
+    INSTALLED=$(rpm -q --qf '%{VERSION}-%{RELEASE}' apexsender 2>/dev/null) || INSTALLED=""
     case "$INSTALLED" in
-        "$VERSION_NAME-$VERSION_CODE"*) echo -e "${G}✅ المثبّت الآن: apexsender $INSTALLED${N}" ;;
-        *) echo -e "${R}❌ المثبّت ${INSTALLED:-لا شيء}، لا $VERSION_NAME-$VERSION_CODE من pubspec${N}"; return 1 ;;
+        "$VERSION_NAME-$VERSION_CODE"|"$VERSION_NAME-$VERSION_CODE".*)
+            echo -e "${G}✅ المثبّت الآن: apexsender $INSTALLED${N}" ;;
+        *)
+            echo -e "${R}❌ لم يُثبَّت $VERSION_NAME-$VERSION_CODE (رقم pubspec)، والمثبّت الآن: ${INSTALLED:-لا شيء}. dnf لا يثبّت إصداراً أقدم من المثبّت، فارفع رقم البناء أو أزل الحزمة أولاً.${N}"
+            return 1 ;;
     esac
 }
 
