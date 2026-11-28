@@ -146,6 +146,7 @@ class SendHttp {
       final res = await req.close().timeout(TransferRules.decisionTimeout + const Duration(seconds: 10));
       final reply = await _readReply(res);
       if (reply == null) {
+        ApexLogger.instance.log('SEND', 'Chat reply unread: ${res.statusCode} from ${target.ip}', LogLevel.warning);
         return failed;
       }
       switch (res.statusCode) {
@@ -158,6 +159,7 @@ class SendHttp {
         case HttpStatus.ok:
           break;
         default:
+          ApexLogger.instance.log('SEND', 'Chat refused: ${res.statusCode} $reply from ${target.ip}', LogLevel.warning);
           return failed;
       }
       final json = jsonDecode(reply);
@@ -242,6 +244,7 @@ class SendHttp {
         );
       }
       if (res.statusCode != HttpStatus.ok) {
+        ApexLogger.instance.log('SEND', 'Offer refused: ${res.statusCode} $text from ${target.ip}', LogLevel.warning);
         return failed;
       }
       final json = jsonDecode(text);
@@ -326,9 +329,11 @@ class SendHttp {
       if (ApexProtocol.isRefusal(res.statusCode, json)) {
         return SendOutcome.declined;
       }
-      return res.statusCode == HttpStatus.ok && json is Map && json['success'] == true
-          ? SendOutcome.sent
-          : SendOutcome.failed;
+      if (res.statusCode == HttpStatus.ok && json is Map && json['success'] == true) {
+        return SendOutcome.sent;
+      }
+      ApexLogger.instance.log('SEND', 'Upload refused: ${res.statusCode} $text from ${target.ip}', LogLevel.warning);
+      return SendOutcome.failed;
     } catch (e) {
       ApexLogger.instance.log('SEND', 'Upload failed: $e', LogLevel.error);
       try {
