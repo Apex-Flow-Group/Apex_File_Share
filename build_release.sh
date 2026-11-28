@@ -1,13 +1,13 @@
 #!/bin/bash
 # ============================================================
-#  Apex Music — Smart Build Tool
+#  Apex File Share — Build Tool
 # ============================================================
 
 KEYSTORE_DIR="$HOME/.apex_keystore"
 KEYSTORE_FILE="$KEYSTORE_DIR/apex_release.jks"
 KEY_PROPERTIES="android/key.properties"
 OUTPUT_DIR="releases"
-APP_NAME="ApexMusic"
+APP_NAME="ApexFileShare"
 
 # ── ألوان ────────────────────────────────────────────────────
 R='\033[0;31m' G='\033[0;32m' Y='\033[1;33m'
@@ -43,7 +43,7 @@ ensure_keystore() {
             -validity 10000 \
             -storepass "$KS_PASS" \
             -keypass "$KEY_PASS" \
-            -dname "CN=Apex-Music, O=Apex-Flow, C=SA" 2>/dev/null
+            -dname "CN=Apex-File-Share, O=Apex-Flow, C=SA" 2>/dev/null
 
         echo -e "${G}✅ تم إنشاء Keystore في: $KEYSTORE_FILE${N}"
     else
@@ -171,12 +171,38 @@ do_reset_keystore() {
     fi
 }
 
+# Fedora only: builds the package with packaging/fedora/build_rpm.sh at the
+# pubspec version, then installs it (reinstalls the same version too).
+do_build_rpm() {
+    if [ ! -f /etc/fedora-release ] || ! command -v rpmbuild >/dev/null; then
+        echo -e "${R}❌ حزمة RPM تُبنى على Fedora فقط، وتحتاج rpmbuild (sudo dnf install rpm-build)${N}"
+        return 1
+    fi
+    bash packaging/fedora/build_rpm.sh "$VERSION_NAME" "$VERSION_CODE" || return 1
+    RPM=$(ls build/rpm/apexsender-"$VERSION_NAME"-"$VERSION_CODE".*.rpm 2>/dev/null | head -1)
+    if [ -z "$RPM" ]; then
+        echo -e "${R}❌ لم يُعثر على الحزمة في build/rpm${N}"
+        return 1
+    fi
+    if rpm -q apexsender >/dev/null 2>&1; then
+        sudo dnf reinstall -y "$RPM" || sudo dnf install -y "$RPM"
+    else
+        sudo dnf install -y "$RPM"
+    fi
+    # dnf refuses a version older than the installed one without failing here.
+    INSTALLED=$(rpm -q --qf '%{VERSION}-%{RELEASE}' apexsender 2>/dev/null)
+    case "$INSTALLED" in
+        "$VERSION_NAME-$VERSION_CODE"*) echo -e "${G}✅ المثبّت الآن: apexsender $INSTALLED${N}" ;;
+        *) echo -e "${R}❌ المثبّت ${INSTALLED:-لا شيء}، لا $VERSION_NAME-$VERSION_CODE من pubspec${N}"; return 1 ;;
+    esac
+}
+
 # ── القائمة الرئيسية ──────────────────────────────────────────
 show_menu() {
     clear
     echo -e "${W}"
     echo "  ╔═══════════════════════════════════════╗"
-    echo "  ║      🎵 Apex Music Build Tool         ║"
+    echo "  ║      Apex File Share Build Tool       ║"
     printf "  ║      v%-33s║\n" "$VERSION_NAME (code: $VERSION_CODE)"
     echo "  ╠═══════════════════════════════════════╣"
     echo "  ║                                       ║"
@@ -187,6 +213,7 @@ show_menu() {
     echo -e "  ║  ${G}[4]${W} Build APK                        ║"
     echo -e "  ║  ${G}[5]${W} Build AAB                        ║"
     echo -e "  ║  ${G}[6]${W} Build APK + AAB + ZIP            ║"
+    echo -e "  ║  ${G}[R]${W} Build RPM + Install (Fedora)     ║"
     echo "  ║  ─────────────────────────────────── ║"
     echo -e "  ║  ${Y}[7]${W} Install APK على الجهاز           ║"
     echo -e "  ║  ${Y}[8]${W} Uninstall من الجهاز              ║"
@@ -219,6 +246,7 @@ while true; do
         4) do_build_apk ;;
         5) do_build_aab ;;
         6) do_build_all ;;
+        r) do_build_rpm ;;
         7) do_install ;;
         8) do_uninstall ;;
         9) do_run ;;
