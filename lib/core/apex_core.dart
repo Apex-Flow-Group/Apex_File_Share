@@ -230,6 +230,7 @@ class ApexCore {
     }
     await _pins.useFile(File('${folder.path}/pins.json'));
     await senders.useFile(File('${(await getApplicationSupportDirectory()).path}/senders.json'));
+    ApexLogger.instance.useFile(File('${(await getApplicationSupportDirectory()).path}/apex.log'));
     _localDevice = Device(
       id: deviceId,
       name: name,
