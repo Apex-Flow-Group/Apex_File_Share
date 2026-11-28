@@ -54,7 +54,7 @@ void main() {
     });
   });
 
-  test('the sender turns that refusal into a bare failure and logs nothing', () async {
+  test('the sender reports that refusal as a failure, and now logs its reason', () async {
     await loadPeers();
     final server = await bindReceiver();
     addTearDown(() => server.close(force: true));
@@ -72,7 +72,10 @@ void main() {
     final r = await SendHttp(getContext: senderContext, getLocalName: () => 'Jawal', getLocalId: () => 'jawal')
         .sendChat('hello', Device(id: 'fedora', name: 'fedora', type: 'desktop', ip: '127.0.0.1', port: server.port, fingerprint: testReceiver.fingerprint), null);
 
+    // The log stream delivers on a later microtask.
+    await Future<void>.delayed(Duration.zero);
     expect(r.outcome, ChatOutcome.failed);
-    expect(logged, isEmpty, reason: 'the 403 and its reason reach no log');
+    expect(logged.map((e) => e.message), [contains('403 {"error":"${ApexProtocol.wrongIdentity}"}')],
+        reason: 'the refusal and its reason reach the log (apex.log in a release build)');
   });
 }
