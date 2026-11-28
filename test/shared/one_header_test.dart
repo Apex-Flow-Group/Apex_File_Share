@@ -47,11 +47,11 @@ void main() {
         greaterThanOrEqualTo(24 + 16));
   });
 
-  // Plain, as the system's own window bar is (owner decision): no gradient,
-  // no strip, no screen's colour, no purple. The title on the window, the
-  // icon in the text's colour on a neutral step.
+  // A faint gradient a step off the window into the window (owner decision):
+  // no screen's colour, no purple. The icon in the text's colour on a
+  // neutral step.
   for (final brightness in Brightness.values) {
-    testWidgets('${brightness.name}: plain, on the window, in the roles',
+    testWidgets('${brightness.name}: a step off the window, in the roles',
         (tester) async {
       final c =
           brightness == Brightness.dark ? ApexColors.dark : ApexColors.light;
@@ -76,20 +76,24 @@ void main() {
           .widgetList<DecoratedBox>(find.descendant(
               of: inHeader, matching: find.byType(DecoratedBox)))
           .toList();
-      expect(boxes, hasLength(1),
-          reason: "the icon's box only: nothing is drawn behind the title");
-      final box = boxes.single.decoration as BoxDecoration;
+      expect(boxes, hasLength(2),
+          reason: "the header's background and the icon's box");
+      final back = boxes.first.decoration as BoxDecoration;
+      final gradient = back.gradient! as LinearGradient;
+      expect(gradient.colors, [c.panel, c.window]);
+      expect(back.color, isNull);
+      final box = boxes.last.decoration as BoxDecoration;
       expect(box.gradient, isNull);
       expect(box.color, c.circle);
       expect(
           find.descendant(
-              of: find.byWidget(boxes.single),
+              of: find.byWidget(boxes.last),
               matching: find.byIcon(Icons.folder_rounded)),
           findsOneWidget);
       expect(tester.widget<Icon>(find.byIcon(Icons.folder_rounded)).color,
           c.onCircle);
 
-      // What the title sits on is the window: the screen's own surface.
+      // The gradient ends in the window: the screen's own surface.
       final under = tester.widget<Material>(find
           .ancestor(of: find.text('Files'), matching: find.byType(Material))
           .first);
@@ -114,6 +118,10 @@ void main() {
           reason: 'the subtitle');
       expect(contrast(c.hint, c.window), greaterThanOrEqualTo(4.5),
           reason: 'the detail line');
+      expect(contrast(c.muted, c.panel), greaterThanOrEqualTo(4.5),
+          reason: 'the subtitle where the gradient starts');
+      expect(contrast(c.hint, c.panel), greaterThanOrEqualTo(4.5),
+          reason: 'the detail line where the gradient starts');
     });
   }
 }
