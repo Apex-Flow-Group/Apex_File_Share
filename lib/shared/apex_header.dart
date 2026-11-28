@@ -7,10 +7,9 @@ import 'apex_colors.dart';
 /// ([ApexSheetTop]); both reach it as its top padding, so the screen above
 /// it must not take that padding away (no SafeArea top over it).
 ///
-/// Plain, as the system's own window bar is (owner decision): it paints
-/// nothing behind itself, so its title sits on the window, or on the sheet
-/// that holds it, and its icon is the text's colour on a neutral step. No
-/// screen gives it a colour of its own.
+/// A faint gradient from a step off the window into the window (owner
+/// decision): lighter in dark, darker in light, never a screen's colour. Its
+/// icon is the text's colour on a neutral step.
 class ApexHeader extends StatelessWidget {
   const ApexHeader({
     required this.icon,
@@ -42,9 +41,17 @@ class ApexHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final c = ApexColors.of(context);
     final small = theme.textTheme.bodySmall;
-    return Padding(
+    return Container(
       padding: EdgeInsets.fromLTRB(
           inset, MediaQuery.paddingOf(context).top + 16, inset, 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [c.panel, c.window],
+        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
+      ),
       child: Row(
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 12)],
