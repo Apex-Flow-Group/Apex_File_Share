@@ -410,7 +410,9 @@ class _FeatureCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(feature.icon, color: c.onTint, size: 22),
+            child: Icon(feature.icon,
+                color: feature.color == c.accent ? c.onAccent : c.onTint,
+                size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(

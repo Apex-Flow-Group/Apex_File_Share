@@ -96,7 +96,8 @@ class FileTile extends StatelessWidget {
                       ],
                     ),
                     child: Icon(FileUiUtils.fileIcon(name),
-                        color: c.onTint, size: 24),
+                        color: iconColor == c.accent ? c.onAccent : c.onTint,
+                        size: 24),
                   ),
             const SizedBox(width: 12),
             Expanded(

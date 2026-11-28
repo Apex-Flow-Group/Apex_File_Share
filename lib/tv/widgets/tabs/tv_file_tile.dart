@@ -131,7 +131,8 @@ class _TVFileTileState extends State<TVFileTile> {
                   ],
                 ),
                 child: Icon(FileUiUtils.fileIcon(widget.name),
-                    color: c.onTint, size: 24),
+                    color: iconColor == c.accent ? c.onAccent : c.onTint,
+                    size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(

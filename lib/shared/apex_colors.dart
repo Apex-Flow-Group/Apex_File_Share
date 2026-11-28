@@ -114,6 +114,13 @@ class ApexColors extends ThemeExtension<ApexColors> {
 
   final Color accent;
 
+  /// What is drawn on [accent]: black on a light one, white on a dark one,
+  /// as the theme's onPrimary. The accent is the user's choice, so its
+  /// lightness is not known in advance.
+  Color get onAccent => accent.computeLuminance() < 0.4
+      ? const Color(0xFFFFFFFF)
+      : const Color(0xFF000000);
+
   /// Block, delete: in the text, not the capsule (capsule-ui §0).
   final Color danger;
 

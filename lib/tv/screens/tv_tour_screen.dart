@@ -443,7 +443,9 @@ class _TVFeatureCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(feature.icon, color: c.onTint, size: 20),
+          child: Icon(feature.icon,
+              color: feature.color == c.accent ? c.onAccent : c.onTint,
+              size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
