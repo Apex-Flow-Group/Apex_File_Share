@@ -171,6 +171,40 @@ do_reset_keystore() {
     fi
 }
 
+# Windows (Git Bash) only: the steps of build_windows.bat, then a silent
+# install, checked against the build.
+do_build_windows() {
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*) ;;
+        *) echo -e "${R}❌ مثبّت Windows يُبنى على Windows فقط، من Git Bash${N}"; return 1 ;;
+    esac
+    if ! flutter analyze lib/ --no-pub | tee /dev/stderr | grep -q "No issues found"; then
+        echo -e "${R}❌ وجد flutter analyze ملاحظات، فلم يُبنَ شيء. أصلحها أولاً${N}"
+        return 1
+    fi
+    flutter build windows --release || return 1
+    local exe="build/windows/x64/runner/Release/file_share_app.exe"
+    [ -f "$exe" ] || { echo -e "${R}❌ لم يُبنَ file_share_app.exe${N}"; return 1; }
+    local iscc="${ISCC:-/c/Program Files (x86)/Inno Setup 6/ISCC.exe}"
+    if [ ! -f "$iscc" ]; then
+        echo -e "${R}❌ Inno Setup غير مثبّت: https://jrsoftware.org/isdl.php${N}"
+        return 1
+    fi
+    "$iscc" windows/apex_file_share_setup.iss >/dev/null || { echo -e "${R}❌ فشل بناء المثبّت${N}"; return 1; }
+    local setup="installer/ApexFileShare_Setup_${VERSION_NAME}.${VERSION_CODE}.exe"
+    [ -f "$setup" ] || { echo -e "${R}❌ لم يُعثر على $setup${N}"; return 1; }
+    echo -e "${G}✅ المثبّت: $setup ($(du -h "$setup" | cut -f1))${N}"
+    MSYS2_ARG_CONV_EXCL='*' "$setup" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS || {
+        echo -e "${R}❌ فشل التثبيت الصامت${N}"; return 1; }
+    local installed="$LOCALAPPDATA/Programs/Apex File Share/data/app.so"
+    if cmp -s "$installed" "build/windows/x64/runner/Release/data/app.so"; then
+        echo -e "${G}✅ ثُبّت $VERSION_NAME+$VERSION_CODE، والكود المثبّت مطابق للبناء${N}"
+    else
+        echo -e "${R}❌ الكود المثبّت لا يطابق البناء: أغلق التطبيق وأعد المحاولة${N}"
+        return 1
+    fi
+}
+
 # Fedora only: builds the package with packaging/fedora/build_rpm.sh at the
 # pubspec version, then installs it (reinstalls the same version too).
 do_build_rpm() {
@@ -217,6 +251,7 @@ show_menu() {
     echo -e "  ║  ${G}[5]${W} Build AAB                        ║"
     echo -e "  ║  ${G}[6]${W} Build APK + AAB + ZIP            ║"
     echo -e "  ║  ${G}[R]${W} Build RPM + Install (Fedora)     ║"
+    echo -e "  ║  ${G}[W]${W} Build EXE + Install (Windows)    ║"
     echo "  ║  ─────────────────────────────────── ║"
     echo -e "  ║  ${Y}[7]${W} Install APK على الجهاز           ║"
     echo -e "  ║  ${Y}[8]${W} Uninstall من الجهاز              ║"
@@ -250,6 +285,7 @@ while true; do
         5) do_build_aab ;;
         6) do_build_all ;;
         r) do_build_rpm ;;
+        w) do_build_windows ;;
         7) do_install ;;
         8) do_uninstall ;;
         9) do_run ;;
