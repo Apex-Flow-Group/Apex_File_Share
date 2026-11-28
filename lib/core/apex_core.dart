@@ -30,6 +30,7 @@ import '../utils/path_utils.dart';
 import 'core_models.dart';
 import 'discovery_merge.dart';
 import 'files/move_into_folder.dart';
+import 'heard_addresses.dart';
 import 'nearby_transfer.dart';
 import 'one_question.dart';
 import 'server_port.dart';
@@ -178,15 +179,12 @@ class ApexCore {
   /// another device by the same rule as a send.
   PinStore get pins => _pins;
 
+  /// Every address each device announced itself from, with its certificate.
+  final _heardAt = HeardAddresses();
+
   /// The fingerprint discovery heard from [id] at [address]: a request that
   /// claims to be that device must come with that certificate.
-  String? _expectedFingerprint(String id, String address) {
-    final d = _discoveredDevices[id];
-    if (d == null || d.versionMismatch || d.ip != address || d.fingerprint.isEmpty) {
-      return null;
-    }
-    return d.fingerprint;
-  }
+  String? _expectedFingerprint(String id, String address) => _heardAt.expected(id, address);
 
   bool get _isAndroid => !kIsWeb && Platform.isAndroid;
 
@@ -272,6 +270,7 @@ class ApexCore {
       if (TransferProgressService().isTransferring) {
         return;
       }
+      _heardAt.heard(device);
       // Never merged by name: its address must not reach a working record.
       if (device.versionMismatch) {
         _discoveredDevices[device.id] = device;
@@ -292,6 +291,7 @@ class ApexCore {
         return;
       }
       _discoveredDevices.remove(id);
+      _heardAt.forget(id);
       _nearby.forget(id);
       _devicesController.add(devices);
     });
