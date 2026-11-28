@@ -32,6 +32,38 @@ void main() {
     expect(heard.expected('jawal', '192.168.8.103'), 'bb22');
   });
 
+  test('an address not heard within the device timeout is pruned, as the device list is', () {
+    var now = DateTime(2026, 11, 28, 19);
+    final heard = HeardAddresses(clock: () => now)..heard(at('192.168.0.128'));
+    now = now.add(const Duration(seconds: 40));
+    heard.heard(at('192.168.8.103'));
+    now = now.add(const Duration(seconds: 30));
+    heard.prune(const Duration(seconds: 60));
+    expect(heard.expected('jawal', '192.168.0.128'), isNull, reason: 'heard 70 s ago');
+    expect(heard.expected('jawal', '192.168.8.103'), 'aa11', reason: 'heard 30 s ago');
+
+    now = now.add(const Duration(minutes: 2));
+    heard.prune(const Duration(seconds: 60));
+    expect(heard.expected('jawal', '192.168.8.103'), isNull);
+  });
+
+  test('a flood of forged packets cannot grow it without end', () {
+    final heard = HeardAddresses();
+    for (var i = 0; i < 10000; i++) {
+      heard.heard(at('10.0.${i ~/ 250}.${i % 250}'));
+      heard.heard(Device(id: 'fake-$i', name: 'x', type: 'desktop', ip: '10.1.0.1', port: 1, fingerprint: 'cc33'));
+    }
+    expect(heard.addressCount('jawal'), lessThanOrEqualTo(HeardAddresses.maxAddressesPerDevice));
+    expect(heard.deviceCount, lessThanOrEqualTo(HeardAddresses.maxDevices));
+    expect(heard.expected('jawal', '10.0.39.249'), 'aa11', reason: 'the newest address stays');
+  });
+
+  test('clear forgets everything, as stopping discovery does', () {
+    final heard = HeardAddresses()..heard(at('192.168.0.128'));
+    heard.clear();
+    expect(heard.expected('jawal', '192.168.0.128'), isNull);
+  });
+
   test('nothing is expected from a device of another version or without a certificate, or once lost', () {
     final heard = HeardAddresses()
       ..heard(at('192.168.0.128', mismatch: true))
