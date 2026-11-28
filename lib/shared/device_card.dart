@@ -258,7 +258,7 @@ class _DeviceCardState extends State<DeviceCard>
                 // back, the content sliding with it, never fading.
                 SizeTransition(
                   sizeFactor: _curve,
-                  axisAlignment: -1,
+                  alignment: AlignmentDirectional.topStart,
                   child: _grow.isDismissed && !expanded
                       ? const SizedBox(width: double.infinity)
                       : _opened(context),
