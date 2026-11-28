@@ -161,6 +161,34 @@ class ApexColors extends ThemeExtension<ApexColors> {
     );
   }
 
+  /// These colours with the system's [accent] for what is selected and for
+  /// the accent role: a system that gives only its accent (Windows) keeps
+  /// the rest of the app's own.
+  ApexColors withAccent(Color accent) {
+    final a = accent.withAlpha(255);
+    return ApexColors(
+      window: window,
+      panel: panel,
+      panelBorder: panelBorder,
+      hover: hover,
+      selected: Color.lerp(panel, a, 0.3)!,
+      floating: floating,
+      floatingSelected: Color.lerp(floating, a, 0.3)!,
+      text: text,
+      muted: muted,
+      capsule: capsule,
+      capsuleBorder: capsuleBorder,
+      circle: circle,
+      onCircle: onCircle,
+      filled: filled,
+      onFilled: onFilled,
+      hint: hint,
+      accent: a,
+      danger: danger,
+      online: online,
+    );
+  }
+
   /// Dark or light, read from what is behind everything.
   Brightness get brightness =>
       window.computeLuminance() < 0.5 ? Brightness.dark : Brightness.light;

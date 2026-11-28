@@ -90,6 +90,40 @@ void main() {
     });
   });
 
+  group('a system that gives only its accent (Windows)', () {
+    const accent = Color(0xFF0078D4);
+
+    test('what is selected and Material\'s widgets take it, the rest stays the app\'s own', () {
+      final t = apexTheme(Brightness.dark, accent: accent);
+      final c = t.extension<ApexColors>()!;
+      expect(c.accent, accent);
+      expect(c.selected, Color.lerp(ApexColors.dark.panel, accent, 0.3));
+      expect(c.window, ApexColors.dark.window);
+      expect(c.panel, ApexColors.dark.panel);
+      expect(c.text, ApexColors.dark.text);
+      expect(t.colorScheme.primary, accent);
+    });
+
+    test('text on the accent is white on a dark accent and black on a light one', () {
+      expect(apexTheme(Brightness.dark, accent: accent).colorScheme.onPrimary,
+          const Color(0xFFFFFFFF));
+      expect(apexTheme(Brightness.dark, accent: const Color(0xFFFFD800)).colorScheme.onPrimary,
+          const Color(0xFF000000));
+    });
+
+    test('the full system colours win over the accent when both are there', () {
+      final system = ApexColors.fromSystem(_darkSystem)!;
+      expect(apexTheme(Brightness.dark, system: system, accent: accent).colorScheme.primary,
+          const Color(0xFF3DAEE9));
+    });
+
+    test('the accent arrives as accent_color, opaque', () {
+      expect(SystemColors.readColors({'accent_color': 0xFF0078D4})['accent_color'], accent);
+      expect(ApexColors.fromSystem(SystemColors.readColors({'accent_color': 0xFF0078D4})), isNull,
+          reason: 'an accent alone is not a whole palette');
+    });
+  });
+
   test('the channel map is read as name to colour, anything else dropped', () {
     final read = SystemColors.readColors({
       'theme_bg_color': 0xFF202326,

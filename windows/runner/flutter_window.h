@@ -37,6 +37,10 @@ class FlutterWindow : public Win32Window {
 
   // True between Dart's "start" and "stop" on the clipboard channel.
   bool clipboard_listening_ = false;
+
+  // MethodChannel that gives Dart the system's colours and their changes.
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      colors_channel_;
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

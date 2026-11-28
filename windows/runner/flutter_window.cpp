@@ -1,5 +1,6 @@
 #include "flutter_window.h"
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -16,6 +17,29 @@
 
 // ─── Clipboard MethodChannel name (must match Dart side) ─────────────────────
 static const char kClipboardChannel[] = "com.apex.core/clipboard";
+
+// ─── System colours (must match lib/platform/system_colors.dart) ─────────────
+static const char kSystemColorsChannel[] = "com.apex.core/system_colors";
+
+// Windows gives apps its light or dark mode and the accent colour the user
+// picked in Settings, not its greys: the map holds the accent as
+// "accent_color" (0xAARRGGBB), or nothing when it cannot be read.
+static flutter::EncodableMap ReadSystemColors() {
+  flutter::EncodableMap colors;
+  DWORD abgr = 0;
+  DWORD size = sizeof(abgr);
+  if (RegGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\DWM",
+                   L"AccentColor", RRF_RT_REG_DWORD, nullptr, &abgr,
+                   &size) == ERROR_SUCCESS) {
+    const int64_t r = abgr & 0xFF;
+    const int64_t g = (abgr >> 8) & 0xFF;
+    const int64_t b = (abgr >> 16) & 0xFF;
+    const int64_t argb = (int64_t{0xFF} << 24) | (r << 16) | (g << 8) | b;
+    colors[flutter::EncodableValue("accent_color")] =
+        flutter::EncodableValue(argb);
+  }
+  return colors;
+}
 
 // ─── Helper: convert wide string to UTF-8 ────────────────────────────────────
 static std::string WideToUtf8(const std::wstring& wide) {
@@ -228,6 +252,21 @@ bool FlutterWindow::OnCreate() {
         }
       });
 
+  // ── Set up system colours MethodChannel ─────────────────────────────────
+  colors_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(), kSystemColorsChannel,
+          &flutter::StandardMethodCodec::GetInstance());
+  colors_channel_->SetMethodCallHandler(
+      [](const flutter::MethodCall<flutter::EncodableValue>& call,
+         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        if (call.method_name() == "get") {
+          result->Success(flutter::EncodableValue(ReadSystemColors()));
+        } else {
+          result->NotImplemented();
+        }
+      });
+
   // ── Initialize COM (needed for WIC PNG encoding) ─────────────────────────
   CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
@@ -247,6 +286,7 @@ void FlutterWindow::OnDestroy() {
   }
   CoUninitialize();
 
+  colors_channel_ = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }
@@ -271,6 +311,16 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
   switch (message) {
     case WM_FONTCHANGE:
       flutter_controller_->engine()->ReloadSystemFonts();
+      break;
+
+    // The user picked another accent colour: the app takes it at once. The
+    // window's own handler still runs after this (it updates the title bar).
+    case WM_DWMCOLORIZATIONCOLORCHANGED:
+      if (colors_channel_) {
+        colors_channel_->InvokeMethod(
+            "changed", std::make_unique<flutter::EncodableValue>(
+                           ReadSystemColors()));
+      }
       break;
 
     case WM_CLIPBOARDUPDATE: {

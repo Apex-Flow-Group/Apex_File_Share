@@ -8,8 +8,8 @@ import '../shared/apex_colors.dart';
 /// it is, and copies no colour of it into the code).
 ///
 /// Linux sends its theme's colours by their standard GTK names (KDE fills
-/// them from its colour scheme). A system that sends none keeps the app's
-/// own colours.
+/// them from its colour scheme). Windows gives apps only its accent colour,
+/// as "accent_color". A system that sends none keeps the app's own colours.
 class SystemColors extends ChangeNotifier {
   SystemColors._();
   static final instance = SystemColors._();
@@ -17,9 +17,14 @@ class SystemColors extends ChangeNotifier {
   static const _channel = MethodChannel('com.apex.core/system_colors');
 
   ApexColors? _palette;
+  Color? _accent;
 
   /// The app's colours made from the system's, or null when it sent none.
   ApexColors? get palette => _palette;
+
+  /// The accent colour the user picked in the system (Windows sends only
+  /// this one), or null when it sent none.
+  Color? get accent => _accent;
 
   Future<void> load() async {
     _channel.setMethodCallHandler((call) async {
@@ -37,7 +42,9 @@ class SystemColors extends ChangeNotifier {
   }
 
   void _take(Object? raw) {
-    _palette = ApexColors.fromSystem(readColors(raw));
+    final colors = readColors(raw);
+    _palette = ApexColors.fromSystem(colors);
+    _accent = colors['accent_color']?.withAlpha(255);
     notifyListeners();
   }
 

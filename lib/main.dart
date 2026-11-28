@@ -36,12 +36,13 @@ class _BootApp extends StatelessWidget {
       listenable: SystemColors.instance,
       builder: (context, _) {
         final system = SystemColors.instance.palette;
+        final accent = SystemColors.instance.accent;
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           supportedLocales: const [Locale('ar'), Locale('en')],
           localizationsDelegates: appLocalizationsDelegates,
-          theme: apexTheme(Brightness.light, system: system),
-          darkTheme: apexTheme(Brightness.dark, system: system),
+          theme: apexTheme(Brightness.light, system: system, accent: accent),
+          darkTheme: apexTheme(Brightness.dark, system: system, accent: accent),
           themeMode: ThemeMode.system,
           home: SplashScreen(
             onInit: _initAll,
@@ -78,6 +79,7 @@ class FileShareApp extends StatelessWidget {
       animation: Listenable.merge([settings, SystemColors.instance]),
       builder: (context, _) {
         final system = SystemColors.instance.palette;
+        final accent = SystemColors.instance.accent;
         return MaterialApp(
           onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
           debugShowCheckedModeBanner: false,
@@ -95,8 +97,8 @@ class FileShareApp extends StatelessWidget {
           },
           supportedLocales: const [Locale('ar'), Locale('en')],
           localizationsDelegates: appLocalizationsDelegates,
-          theme: apexTheme(Brightness.light, system: system),
-          darkTheme: apexTheme(Brightness.dark, system: system),
+          theme: apexTheme(Brightness.light, system: system, accent: accent),
+          darkTheme: apexTheme(Brightness.dark, system: system, accent: accent),
           themeMode: settings.themeMode,
           builder: (context, child) {
             DesktopNotificationService.instance.locale =
