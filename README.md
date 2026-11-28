@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Windows%20%7C%20Linux%20%7C%20TV-lightgrey.svg)]()
 
-[عربي](README.ar.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
+[عربي](README.ar.md)
 
 </div>
 
@@ -228,9 +228,6 @@ Both write a temp file (`/tmp/apex_clip_*.{txt,png}`) and push the path to Dart 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
-
-Quick summary:
 1. Fork → create a branch from `develop`
 2. Make your changes
 3. `flutter analyze` must pass with no issues

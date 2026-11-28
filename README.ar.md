@@ -9,7 +9,7 @@
 [![الرخصة](https://img.shields.io/badge/رخصة-MIT-green.svg)](LICENSE)
 [![المنصات](https://img.shields.io/badge/المنصات-Android%20%7C%20Windows%20%7C%20Linux%20%7C%20TV-lightgrey.svg)]()
 
-[English](README.md) · [سجل التغييرات](CHANGELOG.md) · [المساهمة](CONTRIBUTING.md)
+[English](README.md)
 
 </div>
 
@@ -228,9 +228,6 @@ HTTP POST /upload  ──────────►  حفظ تدريجي على
 
 ## المساهمة
 
-راجع [CONTRIBUTING.md](CONTRIBUTING.md) للدليل الكامل.
-
-ملخص سريع:
 1. Fork → أنشئ فرعاً من `develop`
 2. طبّق تغييراتك
 3. `flutter analyze` يجب أن يمر بدون أخطاء
