@@ -178,6 +178,13 @@ static void my_application_activate(GApplication* application) {
   gtk_window_set_icon_name(window, "apexsender");
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
+  // Flutter 3.50.1's Impeller on Linux (OpenGLESSDF) drew every gradient as
+  // two flat colours with a hard edge on NVIDIA's open driver (nouveau) and
+  // on software rendering (llvmpipe, as in a virtual machine); on Intel it
+  // was smooth, and Skia is smooth on all three (measured 2026-11-28). The
+  // app cannot know its users' drivers, so Skia it is. Try Impeller again on
+  // a later Flutter.
+  fl_dart_project_set_enable_impeller(project, FALSE);
   fl_dart_project_set_dart_entrypoint_arguments(
       project, self->dart_entrypoint_arguments);
 
