@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/device.dart';
+import '../utils/apex_logger.dart';
 
 class PinnedDevicesService {
   static const _key = 'pinned_devices';
@@ -13,7 +14,9 @@ class PinnedDevicesService {
     return raw.map((s) {
       try {
         return Device.fromJson(jsonDecode(s) as Map<String, dynamic>);
-      } catch (_) {
+      } catch (e) {
+        // The type only: the stored text is a device record, not for the log.
+        ApexLogger.instance.log('PINNED', 'Dropped a pinned device that could not be read (${e.runtimeType})', LogLevel.warning);
         return null;
       }
     }).whereType<Device>().toList();

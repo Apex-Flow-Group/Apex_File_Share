@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 
+import 'apex_logger.dart';
+
 class PlatformDetector {
   static final PlatformDetector _instance = PlatformDetector._();
   static PlatformDetector get instance => _instance;
@@ -30,6 +32,7 @@ class PlatformDetector {
         _isTV = androidInfo.systemFeatures.contains('android.software.leanback') ||
                 androidInfo.systemFeatures.contains('android.hardware.type.television');
       } catch (e) {
+        ApexLogger.instance.log('PLATFORM', 'Could not read the device features, assuming not a TV: $e', LogLevel.warning);
         _isTV = false;
       }
     }

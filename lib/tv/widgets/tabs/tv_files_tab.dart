@@ -13,6 +13,7 @@ import '../../../shared/apex_header.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../shared/file_open_message.dart';
 import '../../../shared/folder_open_message.dart';
+import '../../../utils/apex_logger.dart';
 import '../../../utils/path_name.dart';
 import '../tv_focusable_widgets.dart';
 import 'tv_file_tile.dart';
@@ -72,7 +73,8 @@ class _TVFilesTabState extends State<TVFilesTab> {
           _isLoading = false;
         });
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('FILES', 'Could not list the received files: $e', LogLevel.warning);
       if (mounted) {
         setState(() => _isLoading = false);
       }

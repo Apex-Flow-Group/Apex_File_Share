@@ -12,6 +12,7 @@ import '../../../shared/apex_icons.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../shared/file_open_message.dart';
 import '../../../shared/folder_open_message.dart';
+import '../../../utils/apex_logger.dart';
 import '../../../utils/file_utils.dart';
 
 /// قسم المجلد المشترك — يُعرض داخل FilesTab على desktop فقط.
@@ -43,7 +44,8 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
           _loading = false;
         });
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('SHARE', 'Could not list the shared folder: $e', LogLevel.warning);
       if (mounted) setState(() => _loading = false);
     }
   }
@@ -68,7 +70,9 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
           contentLength: await file.length(),
         );
         success++;
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('SHARE', 'Adding a picked file to the shared folder failed: $e', LogLevel.warning);
+      }
     }
     if (mounted) {
       if (success > 0) {
@@ -108,7 +112,8 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
         ApexSnackBar.success(context, l10n.deletedFromShare);
         await _load();
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('SHARE', 'Deleting a shared file failed: $e', LogLevel.error);
       if (mounted) ApexSnackBar.error(context, l10n.uploadFailed);
     }
   }

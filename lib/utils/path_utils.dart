@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'apex_logger.dart';
+
 class PathUtils {
   static const _channel = MethodChannel('com.apex.core/file_ops');
 
@@ -37,7 +39,9 @@ class PathUtils {
           }
           return path;
         }
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('PATHS', 'Could not get the Downloads path from the native side: $e', LogLevel.warning);
+      }
       // Fallback: use public Downloads path directly
       const downloadDir = '/storage/emulated/0/Download/ApexShare';
       final dir = Directory(downloadDir);
@@ -46,8 +50,9 @@ class PathUtils {
           await dir.create(recursive: true);
         }
         return dir.path;
-      } catch (_) {
+      } catch (e) {
         // Final fallback: app-specific storage
+        ApexLogger.instance.log('PATHS', 'Could not create the public Downloads folder, using app storage: $e', LogLevel.warning);
         final extDir = await getExternalStorageDirectory();
         if (extDir != null) {
           final fallbackDir = Directory('${extDir.path}/ApexShare');
@@ -119,7 +124,8 @@ class PathUtils {
         'subFolder': category,
       });
       return result;
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('PATHS', 'Saving to Downloads failed: $e', LogLevel.error);
       return null;
     }
   }

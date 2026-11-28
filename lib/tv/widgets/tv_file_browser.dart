@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../shared/apex_colors.dart';
+import '../../utils/apex_logger.dart';
 import '../../utils/path_name.dart';
 
 const _storageRoot = '/storage/emulated/0';
@@ -119,7 +120,8 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
           }
         });
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('FILES', 'Could not list the folder: $e', LogLevel.warning);
       if (mounted) {
         setState(() => _loading = false);
       }

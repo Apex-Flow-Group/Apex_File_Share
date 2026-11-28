@@ -5,6 +5,7 @@ import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../platform/private_temp.dart';
+import '../utils/apex_logger.dart';
 import '../utils/path_name.dart';
 
 /// خدمة ضغط المجلدات إلى ملفات ZIP قبل الإرسال
@@ -53,7 +54,9 @@ class FolderZipService {
       } else if (await file.exists()) {
         await file.delete();
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('ZIP', 'Could not remove the temporary zip: $e', LogLevel.warning);
+    }
   }
 
   static void _writeZip(String folderPath, String name, String zipPath) {
@@ -105,7 +108,9 @@ class FolderZipService {
           if (now.difference((await e.stat()).modified) > _staleAfter) {
             await e.delete(recursive: true);
           }
-        } catch (_) {}
+        } catch (err) {
+          ApexLogger.instance.log('ZIP', 'Could not remove a stale temporary zip folder: $err', LogLevel.warning);
+        }
       }
     }
   }

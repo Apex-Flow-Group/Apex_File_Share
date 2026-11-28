@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../shared/apex_colors.dart';
+import '../utils/apex_logger.dart';
 
 /// The system's own colours, read while the app runs and read again when the
 /// user changes them (owner decision: the app follows the system, whatever
@@ -34,10 +35,11 @@ class SystemColors extends ChangeNotifier {
     });
     try {
       _take(await _channel.invokeMethod<Object?>('get'));
-    } on MissingPluginException {
+    } on MissingPluginException { // swallow-ok: this system sends no colours, which is the expected outcome there
       // This system sends no colours.
-    } on PlatformException {
+    } on PlatformException catch (e) {
       // Nor does a runner that failed to read them.
+      ApexLogger.instance.log('THEME', 'The runner could not read the system colours: $e', LogLevel.warning);
     }
   }
 

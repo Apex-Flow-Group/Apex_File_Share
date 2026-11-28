@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../platform/private_temp.dart';
+import '../utils/apex_logger.dart';
 
 // ─── Model ────────────────────────────────────────────────────────────────────
 
@@ -29,7 +30,9 @@ class ClipboardItem {
     for (final p in paths) {
       try {
         total += await File(p).length();
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('CLIPBOARD', 'Could not read the size of a clipboard file: $e', LogLevel.warning);
+      }
     }
     return total;
   }
@@ -205,7 +208,9 @@ class ClipboardMonitorService {
           await f.delete();
         }
         _tempImagePaths.remove(p);
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('CLIPBOARD', 'Could not delete a temporary clipboard image: $e', LogLevel.warning);
+      }
     }
   }
 

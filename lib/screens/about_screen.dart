@@ -14,6 +14,7 @@ import '../shared/apex_colors.dart';
 import '../shared/apex_header.dart';
 import '../shared/apex_icons.dart';
 import '../shared/apex_snackbar.dart';
+import '../utils/apex_logger.dart';
 
 const _kPlayStoreUrl =
     'https://play.google.com/store/apps/dev?id=5409981776310932919';
@@ -62,7 +63,8 @@ class _AboutScreenState extends State<AboutScreen> {
     try {
       final info = await PackageInfo.fromPlatform();
       setState(() => _version = 'v${info.version}');
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('ABOUT', 'Could not read the app version: $e', LogLevel.warning);
       setState(() => _version = 'v1.0.0');
     }
   }

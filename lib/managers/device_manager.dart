@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/text/device_label.dart';
+import '../utils/apex_logger.dart';
 
 class DeviceManager {
   /// يجلب اسم الجهاز على الشبكة أو موديله حسب المنصة.
@@ -39,7 +40,9 @@ class DeviceManager {
         // device.name يحمل نفس المعلومة (اسم الجهاز المعيَّن من إعدادات iOS)
         return null;
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('DEVICE', 'Could not read the device model: $e', LogLevel.warning);
+    }
     return null;
   }
 
@@ -80,6 +83,7 @@ class DeviceManager {
       await prefs.setString('device_display_name', deviceName);
       return deviceName;
     } catch (e) {
+      ApexLogger.instance.log('DEVICE', 'Could not read the device name, using the fallback: $e', LogLevel.warning);
       return fallback;
     }
   }
@@ -107,7 +111,8 @@ class DeviceManager {
           return 'tablet';
         }
         return 'phone';
-      } catch (_) {
+      } catch (e) {
+        ApexLogger.instance.log('DEVICE', 'Could not read the Android device type, assuming a phone: $e', LogLevel.warning);
         return 'phone';
       }
     }
@@ -120,7 +125,8 @@ class DeviceManager {
           return 'tablet';
         }
         return 'phone';
-      } catch (_) {
+      } catch (e) {
+        ApexLogger.instance.log('DEVICE', 'Could not read the iOS device type, assuming a phone: $e', LogLevel.warning);
         return 'phone';
       }
     }

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 
+import '../utils/apex_logger.dart';
+
 /// Free bytes on the disk that holds [path], as the current user may use
 /// them. Null when it cannot be read: the batch is then not refused for
 /// space, rather than refused on a wrong number.
@@ -18,7 +20,9 @@ Future<int?> freeBytesAt(String path) async {
     if (Platform.isWindows) {
       return _windows(path);
     }
-  } catch (_) {}
+  } catch (e) {
+    ApexLogger.instance.log('DISK', 'Could not read the free space: $e', LogLevel.warning);
+  }
   return null;
 }
 

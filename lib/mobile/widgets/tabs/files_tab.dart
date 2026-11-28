@@ -8,6 +8,7 @@ import '../../../shared/apex_bottom_sheet.dart';
 import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_header.dart';
 import '../../../shared/apex_snackbar.dart';
+import '../../../utils/apex_logger.dart';
 import '../../../utils/path_name.dart';
 import '../../../utils/platform_detector.dart';
 import '../delete_files_sheet.dart';
@@ -101,7 +102,8 @@ class _FilesTabState extends State<FilesTab>
           _isLoading = false;
         });
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('FILES', 'Could not list the received files: $e', LogLevel.warning);
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -487,7 +489,7 @@ class _FilesTabState extends State<FilesTab>
                 .lastModifiedSync()
                 .compareTo(File(b.path).lastModifiedSync());
         }
-      } catch (_) {
+      } catch (_) { // swallow-ok: a file removed mid-sort compares equal; a log per comparison would flood the log
         return 0;
       }
     });

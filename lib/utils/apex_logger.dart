@@ -62,7 +62,7 @@ class ApexLogger {
           '${e.timestamp.toIso8601String()} ${e.level.name} [${e.tag}] ${e.message}\n',
           mode: FileMode.append,
           flush: true);
-    } on FileSystemException {
+    } on FileSystemException { // swallow-ok: the logger cannot log its own failure
       // A log that cannot be written never stops what was being logged.
     }
   }

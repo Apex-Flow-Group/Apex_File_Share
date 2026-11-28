@@ -222,7 +222,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                         final apkFile = File(app.apkPath);
                         sizeMB = (apkFile.lengthSync() / (1024 * 1024))
                             .toStringAsFixed(1);
-                      } catch (_) {
+                      } catch (_) { // swallow-ok: an unreadable apk shows '?' as its size; a log here would repeat on every rebuild
                         sizeMB = '?';
                       }
 

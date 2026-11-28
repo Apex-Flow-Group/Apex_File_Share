@@ -90,7 +90,7 @@ class FileUtils {
       } on PlatformException catch (e) {
         // Its answer is the reason; falling back to open_filex lost it.
         throw FileOpenError(androidOpenResult(e.code));
-      } on MissingPluginException {
+      } on MissingPluginException { // swallow-ok: no native side on this platform; open_filex below takes over
         // No native side: open_filex below.
       }
     }

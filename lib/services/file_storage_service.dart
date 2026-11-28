@@ -21,8 +21,9 @@ class FileStorageService {
             if (stat.size >= 0) {
               files.add(entity);
             }
-          } catch (_) {
+          } catch (e) {
             // تجاهل الملفات التي لا يمكن قراءتها
+            ApexLogger.instance.log('STORAGE', 'Skipped a file that cannot be read: $e', LogLevel.warning);
           }
         }
       }
@@ -31,7 +32,7 @@ class FileStorageService {
       files.sort((a, b) {
         try {
           return b.statSync().modified.compareTo(a.statSync().modified);
-        } catch (_) {
+        } catch (_) { // swallow-ok: a file removed mid-sort compares equal; a log per comparison would flood the log
           return 0;
         }
       });

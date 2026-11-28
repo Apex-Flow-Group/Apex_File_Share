@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 
+import '../utils/apex_logger.dart';
 import 'idle_wait.dart';
 import 'transfer_progress_service.dart';
 
@@ -43,8 +44,9 @@ class UpdateService {
         _updateAvailable = true;
         _emit(UpdateState.available);
       }
-    } catch (_) {
-      // Play Store غير متاح أو لا يوجد اتصال — نتجاهل بصمت
+    } catch (e) {
+      // Play Store غير متاح أو لا يوجد اتصال
+      ApexLogger.instance.log('UPDATE', 'The update check failed: $e', LogLevel.warning);
     }
   }
 
@@ -66,7 +68,8 @@ class UpdateService {
       } else {
         _emit(UpdateState.readyToInstall);
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('UPDATE', 'The update download failed: $e', LogLevel.warning);
       _emit(UpdateState.idle);
     }
   }
@@ -97,7 +100,8 @@ class UpdateService {
       await InAppUpdate.completeFlexibleUpdate();
       _updateDownloaded = false;
       _emit(UpdateState.idle);
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('UPDATE', 'Completing the update failed: $e', LogLevel.warning);
       _emit(UpdateState.idle);
     }
   }

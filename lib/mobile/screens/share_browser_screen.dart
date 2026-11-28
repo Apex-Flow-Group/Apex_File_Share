@@ -24,6 +24,7 @@ import '../../shared/apex_colors.dart';
 import '../../shared/apex_header.dart';
 import '../../shared/apex_icons.dart';
 import '../../shared/apex_snackbar.dart';
+import '../../utils/apex_logger.dart';
 import '../../utils/file_utils.dart';
 
 /// شاشة تصفح المجلد المشترك لجهاز PC آخر على الشبكة.
@@ -230,6 +231,7 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
             duration: const Duration(seconds: 4));
       }
     } catch (e) {
+      ApexLogger.instance.log('SHARE_BROWSER', 'Download from the shared folder failed: $e', LogLevel.error);
       if (mounted) {
         setState(() => _progress.remove(file.name));
         ApexSnackBar.error(context, l10n.downloadFailed);
@@ -281,6 +283,7 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
         }
       }
     } catch (e) {
+      ApexLogger.instance.log('SHARE_BROWSER', 'Upload to the shared folder failed: $e', LogLevel.error);
       if (mounted) {
         setState(() => _progress.remove(name));
         ApexSnackBar.error(context, l10n.uploadFailed);

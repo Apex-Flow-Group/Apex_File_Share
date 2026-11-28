@@ -335,7 +335,9 @@ class HomeController extends ChangeNotifier {
       if (path != null) {
         setPendingSinanFile(path);
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('HOME', 'Could not read the pending file of the opener: $e', LogLevel.warning);
+    }
   }
 
   void _checkIncomingSharedFiles() async {
@@ -354,7 +356,9 @@ class HomeController extends ChangeNotifier {
       if (list != null && list.isNotEmpty) {
         setPendingSharedFiles(list);
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('HOME', 'Could not read the pending shared files: $e', LogLevel.warning);
+    }
   }
 
   // ─── Update service ─────────────────────────────────────────────────────────

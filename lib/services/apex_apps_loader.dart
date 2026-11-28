@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+import '../utils/apex_logger.dart';
+
 class ApexAppInfo {
   final String name;
   final String apkPath;
@@ -34,6 +36,7 @@ class ApexAppsLoader {
         );
       }).toList();
     } catch (e) {
+      ApexLogger.instance.log('APPS', 'Could not list the installed apps: $e', LogLevel.warning);
       return [];
     }
   }

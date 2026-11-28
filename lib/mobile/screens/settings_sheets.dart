@@ -9,6 +9,7 @@ import '../../services/settings_service.dart';
 import '../../shared/apex_bottom_sheet.dart';
 import '../../shared/apex_colors.dart';
 import '../../shared/apex_snackbar.dart';
+import '../../utils/apex_logger.dart';
 
 /// Helper class containing all bottom-sheet dialogs for SettingsScreen.
 class SettingsSheets {
@@ -172,7 +173,8 @@ class SettingsSheets {
     for (final p in perms) {
       try {
         statuses[p] = await p.permission.status;
-      } catch (_) {
+      } catch (e) {
+        ApexLogger.instance.log('SETTINGS', 'Could not read the ${p.permission} permission, shown as denied: $e', LogLevel.warning);
         statuses[p] = PermissionStatus.denied;
       }
     }
@@ -312,7 +314,8 @@ class SettingsSheets {
         return int.tryParse(match.group(1) ?? '0') ?? 0;
       }
       return 33;
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('SETTINGS', 'Could not read the Android version, assuming 33: $e', LogLevel.warning);
       return 33;
     }
   }
