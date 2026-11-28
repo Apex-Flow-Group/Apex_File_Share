@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../services/settings_service.dart';
+import '../shared/apex_colors.dart';
 import '../utils/platform_detector.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -82,14 +83,15 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark  = Theme.of(context).brightness == Brightness.dark;
     final isTV    = PlatformDetector.instance.isTV;
-    const primary = Color(0xFF6750A4);
+    final primary = c.brand;
     final iconSize = isTV ? 88.0 : 76.0;
     final radius   = isTV ? 22.0 : 18.0;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0D0D0F) : const Color(0xFFF5F3FF),
+      backgroundColor: c.splashBackground,
       body: Stack(children: [
 
         // خلفية gradient
@@ -185,7 +187,7 @@ class _SplashScreenState extends State<SplashScreen>
                       style: TextStyle(
                         fontSize: isTV ? 24 : 19,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : const Color(0xFF1C1B1F),
+                        color: c.splashText,
                         letterSpacing: 0.2,
                       ),
                     ),
@@ -197,9 +199,7 @@ class _SplashScreenState extends State<SplashScreen>
                       style: TextStyle(
                         fontSize: isTV ? 12 : 11,
                         letterSpacing: 1.4,
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.32)
-                            : Colors.black.withValues(alpha: 0.28),
+                        color: c.veil.withValues(alpha: isDark ? 0.32 : 0.28),
                       ),
                     ),
 

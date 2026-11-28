@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/settings_service.dart';
+import '../../shared/apex_colors.dart';
 import 'tv_tour_screen.dart';
 
 class TVIntroScreen extends StatefulWidget {
@@ -87,6 +88,7 @@ class _TVIntroScreenState extends State<TVIntroScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
@@ -150,18 +152,18 @@ class _TVIntroScreenState extends State<TVIntroScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(29),
                             color: hasFocus
-                                ? const Color(0xFF9575CD)
+                                ? c.brandSoft
                                 : Colors.transparent,
                             border: Border.all(
                               color: hasFocus
-                                  ? const Color(0xFF9575CD)
-                                  : const Color(0xFF7E57C2),
+                                  ? c.brandSoft
+                                  : c.brandDeep,
                               width: hasFocus ? 0 : 2,
                             ),
                             boxShadow: hasFocus
                                 ? [
                                     BoxShadow(
-                                      color: const Color(0xFF9575CD)
+                                      color: c.brandSoft
                                           .withValues(alpha: 0.5),
                                       blurRadius: 24,
                                     )
@@ -171,8 +173,8 @@ class _TVIntroScreenState extends State<TVIntroScreen>
                           child: Center(
                             child: Text(
                               l10n.startTour,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: c.onTint,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
@@ -201,14 +203,15 @@ class _TVBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: _BGPainter(progress),
+        painter: _BGPainter(progress, ApexColors.of(context)),
         child: const SizedBox.expand(),
       );
 }
 
 class _BGPainter extends CustomPainter {
   final double p;
-  _BGPainter(this.p);
+  final ApexColors c;
+  _BGPainter(this.p, this.c);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -219,10 +222,10 @@ class _BGPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: const [
-            Color(0xFF1A237E),
-            Color(0xFF283593),
-            Color(0xFF1A237E)
+          colors: [
+            c.introNight,
+            c.introNightLift,
+            c.introNight
           ],
           stops: [
             (sin(p * pi * 2) * 0.1).clamp(0.0, 1.0),
@@ -238,7 +241,7 @@ class _BGPainter extends CustomPainter {
         Offset(x, y),
         35,
         Paint()
-          ..color = const Color(0xFF6750A4).withValues(alpha: 0.08)
+          ..color = c.brand.withValues(alpha: 0.08)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25),
       );
     }
@@ -259,14 +262,15 @@ class _ShimmerText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return ShaderMask(
       shaderCallback: (bounds) => LinearGradient(
-        colors: const [
-          Color(0xFF6750A4),
-          Color(0xFF9575CD),
-          Color(0xFFE1BEE7),
-          Color(0xFF9575CD),
-          Color(0xFF6750A4),
+        colors: [
+          c.brand,
+          c.brandSoft,
+          c.brandPale,
+          c.brandSoft,
+          c.brand,
         ],
         stops: [
           max(0.0, shimmer - 0.3),
@@ -282,7 +286,7 @@ class _ShimmerText extends StatelessWidget {
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: c.onTint,
           letterSpacing: 2,
         ),
       ),

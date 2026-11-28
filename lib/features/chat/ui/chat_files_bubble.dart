@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/file_ui_utils.dart';
 import '../../send/ui/send_outcome_message.dart';
 import '../logic/chat_store.dart';
@@ -36,6 +37,7 @@ class ChatFilesBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -46,7 +48,7 @@ class ChatFilesBubble extends StatelessWidget {
     final total = files.fold<int>(0, (s, f) => s + f.size);
     final background = mine
         ? scheme.primary.withValues(alpha: isDark ? 0.35 : 0.14)
-        : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF0F0F2));
+        : c.bubble;
     // A folder sent as a zip, or a copied text, is gone once sent: retrying
     // would fail the same way, so it is not offered.
     final retry = canRetry &&
@@ -68,7 +70,7 @@ class ChatFilesBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: background,
                   borderRadius: BorderRadius.circular(18),
-                  border: failure != null ? Border.all(color: Colors.red.withValues(alpha: 0.6)) : null,
+                  border: failure != null ? Border.all(color: c.critical.withValues(alpha: 0.6)) : null,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -121,7 +123,7 @@ class ChatFilesBubble extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
                       sendOutcomeMessage(l10n, failure, sent: '', failed: l10n.chatFilesFailed),
-                      style: const TextStyle(fontSize: 12, color: Colors.red)),
+                      style: TextStyle(fontSize: 12, color: c.critical)),
                 ),
                 // Some of the batch arrived before it stopped; a retry sends the rest.
                 if (message.delivered > 0)

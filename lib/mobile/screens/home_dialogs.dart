@@ -6,6 +6,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../services/transfer_progress_service.dart';
 import '../../services/update_service.dart';
 import '../../shared/apex_bottom_sheet.dart';
+import '../../shared/apex_colors.dart';
 import '../../shared/apex_icons.dart';
 import '../../shared/closes_with_request.dart';
 import '../../shared/file_ui_utils.dart';
@@ -59,6 +60,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
       {required IconData icon,
       required String label,
       required VoidCallback fallback}) {
+    final c = ApexColors.of(context);
     final found = ApexCore.instance.chat.chatOf(event);
     final chat = found != null && hasChatCard(found) ? found : null;
     return FilledButton.icon(
@@ -72,7 +74,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
       label: Text(chat == null ? label : l10n.chatOpen,
           maxLines: 1, overflow: TextOverflow.ellipsis),
       style: FilledButton.styleFrom(
-        backgroundColor: Colors.green,
+        backgroundColor: c.success,
         padding: const EdgeInsets.symmetric(vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -80,6 +82,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
   }
 
   void _showFileReceivedSheetInternal(FileReceivedEvent event) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final sepIndex = event.filePath.lastIndexOf(RegExp(r'[/\\]'));
     final displayPath = FileUtils.displayPath(sepIndex == -1
@@ -100,9 +103,9 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
           width: double.infinity,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.06),
+            color: c.success.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+            border: Border.all(color: c.success.withValues(alpha: 0.2)),
           ),
           child: Column(children: [
             Text(event.fileName,
@@ -113,19 +116,19 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 4),
             Text(FileUiUtils.formatFileSize(event.fileSize),
-                style: const TextStyle(
-                    color: Colors.green, fontWeight: FontWeight.w600)),
+                style: TextStyle(
+                    color: c.success, fontWeight: FontWeight.w600)),
           ]),
         ),
         const SizedBox(height: 10),
         Text('${l10n.from}: ${event.fromDevice}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey[600])),
+            style: TextStyle(color: c.caption)),
         Text('${l10n.savedIn}: $displayPath',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+            style: TextStyle(fontSize: 12, color: c.inactive)),
       ])),
       actions: [
         Expanded(
@@ -155,6 +158,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
   // ─── Batch File Received Sheet ─────────────────────────────────────────────
 
   void _showBatchSummarySheet(FileReceivedEvent lastEvent) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final fromDevice = lastEvent.fromDevice;
     final totalFiles = lastEvent.batchTotal;
@@ -173,18 +177,18 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
           width: double.infinity,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.06),
+            color: c.success.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+            border: Border.all(color: c.success.withValues(alpha: 0.2)),
           ),
           child:
-              const Icon(Icons.folder_rounded, size: 36, color: Colors.green),
+              Icon(Icons.folder_rounded, size: 36, color: c.success),
         ),
         const SizedBox(height: 10),
         Text('${l10n.from}: $fromDevice',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey[600])),
+            style: TextStyle(color: c.caption)),
       ])),
       actions: [
         Expanded(
@@ -214,6 +218,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
   // ─── Connection Request Dialog ─────────────────────────────────────────────
 
   void showConnectionRequestDialog(ConnectionRequest request) {
+    final c = ApexColors.of(context);
     // The asker already stopped waiting: an answer here would be ignored.
     if (request.isClosed) {
       return;
@@ -263,18 +268,18 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
           width: double.infinity,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.06),
+            color: c.info.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+            border: Border.all(color: c.info.withValues(alpha: 0.2)),
           ),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               CircleAvatar(
                   radius: 16,
-                  backgroundColor: Colors.blue.withValues(alpha: 0.15),
-                  child: const Icon(Icons.smartphone_rounded,
-                      color: Colors.blue, size: 16)),
+                  backgroundColor: c.info.withValues(alpha: 0.15),
+                  child: Icon(Icons.smartphone_rounded,
+                      color: c.info, size: 16)),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -290,7 +295,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
                           textDirection: TextDirection.ltr,
                           child: Text(request.device.ip,
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[600])),
+                                  fontSize: 12, color: c.caption)),
                         ),
                     ]),
               ),
@@ -299,8 +304,8 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
             if (request.keyChanged) ...[
               const SizedBox(height: 10),
               Row(children: [
-                const Icon(Icons.warning_amber_rounded,
-                    size: 18, color: Colors.orange),
+                Icon(Icons.warning_amber_rounded,
+                    size: 18, color: c.warning),
                 const SizedBox(width: 6),
                 Expanded(
                     child: Text(l10n.requestNewKey,
@@ -319,13 +324,13 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
                       child: Text(name.trim(),
                           overflow: TextOverflow.ellipsis,
                           style:
-                              TextStyle(fontSize: 12, color: Colors.grey[600])),
+                              TextStyle(fontSize: 12, color: c.caption)),
                     )),
               ],
             ] else ...[
               Row(children: [
-                const Icon(Icons.insert_drive_file_rounded,
-                    size: 15, color: Colors.blue),
+                Icon(Icons.insert_drive_file_rounded,
+                    size: 15, color: c.info),
                 const SizedBox(width: 6),
                 Expanded(
                     child: Text(request.fileName,
@@ -336,9 +341,9 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
             if (sizeStr.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(sizeStr,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: Colors.blue,
+                      color: c.info,
                       fontSize: 13)),
             ],
           ]),
@@ -352,8 +357,8 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
             Navigator.pop(context);
           },
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.red,
-            side: const BorderSide(color: Colors.red),
+            foregroundColor: c.critical,
+            side: BorderSide(color: c.critical),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -423,6 +428,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
   // ─── Update Ready Sheet ────────────────────────────────────────────────────
 
   void showUpdateReadySheet() {
+    final c = ApexColors.of(context);
     if (!mounted) {
       return;
     }
@@ -435,10 +441,10 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
           Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.12),
+                  color: c.success.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(18)),
-              child: const Icon(Icons.download_done_rounded,
-                  size: 36, color: Colors.green)),
+              child: Icon(Icons.download_done_rounded,
+                  size: 36, color: c.success)),
           const SizedBox(height: 14),
           Text(l10n.updateReadyToInstall,
               style:
@@ -449,7 +455,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
                   ? l10n.updateInstallsAfterTransfer
                   : l10n.updateDownloadedReady,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+              style: TextStyle(fontSize: 13, color: c.caption)),
           const SizedBox(height: 22),
           if (!isBusy) ...[
             SizedBox(
@@ -462,7 +468,7 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
                   icon: const Icon(Icons.install_mobile_rounded, size: 18),
                   label: Text(l10n.installNow),
                   style: FilledButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: c.success,
                       padding: const EdgeInsets.symmetric(vertical: 14)),
                 )),
             const SizedBox(height: 8),

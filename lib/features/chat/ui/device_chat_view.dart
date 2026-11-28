@@ -8,6 +8,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/device.dart';
 import '../../../services/clipboard_monitor_service.dart';
 import '../../../services/transfer_progress_service.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../shared/file_open_message.dart';
 import '../../../shared/folder_open_message.dart';
@@ -385,6 +386,7 @@ class _Bubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -392,7 +394,7 @@ class _Bubble extends StatelessWidget {
     final failed = message.status == ChatStatus.failed;
     final background = mine
         ? scheme.primary.withValues(alpha: isDark ? 0.35 : 0.14)
-        : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF0F0F2));
+        : c.bubble;
     // Each message keeps its own direction: an English line inside an
     // Arabic screen still reads left to right.
     final direction = Bidi.detectRtlDirectionality(message.text) ? TextDirection.rtl : TextDirection.ltr;
@@ -411,7 +413,7 @@ class _Bubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: background,
                   borderRadius: BorderRadius.circular(18),
-                  border: failed ? Border.all(color: Colors.red.withValues(alpha: 0.6)) : null,
+                  border: failed ? Border.all(color: c.critical.withValues(alpha: 0.6)) : null,
                 ),
                 // The TV has no copy, so nothing there can be selected either.
                 child: canCopy
@@ -434,7 +436,7 @@ class _Bubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(chatOutcomeMessage(l10n, message.failure!),
-                      style: const TextStyle(fontSize: 12, color: Colors.red)),
+                      style: TextStyle(fontSize: 12, color: c.critical)),
                 ),
                 if (_retryHelps(message.failure!))
                   TextButton.icon(

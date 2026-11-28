@@ -9,6 +9,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/device.dart';
 import '../../../models/transfer_progress.dart';
 import '../../../services/transfer_progress_service.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_header.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../screens/settings_sheets.dart';
@@ -102,6 +103,7 @@ class _ReceiveTabState extends State<ReceiveTab>
   // ─── Not Ready ─────────────────────────────────────────────────────────────
 
   Widget _buildNotReady() {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     if (!widget.startFailed) {
       return Center(
@@ -125,11 +127,11 @@ class _ReceiveTabState extends State<ReceiveTab>
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: c.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(28),
               ),
-              child: const Icon(Icons.wifi_off_rounded,
-                  size: 64, color: Colors.orange),
+              child: Icon(Icons.wifi_off_rounded,
+                  size: 64, color: c.warning),
             ),
             const SizedBox(height: 24),
             Text(
@@ -178,6 +180,7 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _buildStatusCard(AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnimatedBuilder(
@@ -190,20 +193,20 @@ class _ReceiveTabState extends State<ReceiveTab>
             end: Alignment.bottomRight,
             colors: _isReceiving
                 ? [
-                    Colors.purple
+                    c.accent
                         .withValues(alpha: 0.15 + _pulseAnim.value * 0.05),
-                    Colors.purple.withValues(alpha: 0.05),
+                    c.accent.withValues(alpha: 0.05),
                   ]
                 : [
-                    Colors.green.withValues(alpha: isDark ? 0.15 : 0.08),
-                    Colors.green.withValues(alpha: 0.02),
+                    c.success.withValues(alpha: isDark ? 0.15 : 0.08),
+                    c.success.withValues(alpha: 0.02),
                   ],
           ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: _isReceiving
-                ? Colors.purple.withValues(alpha: 0.3)
-                : Colors.green.withValues(alpha: 0.2),
+                ? c.accent.withValues(alpha: 0.3)
+                : c.success.withValues(alpha: 0.2),
           ),
         ),
         child: _isReceiving
@@ -214,16 +217,17 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _buildReadyContent(AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.15),
+            color: c.success.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(18),
           ),
-          child: const Icon(Icons.check_circle_rounded,
-              size: 36, color: Colors.green),
+          child: Icon(Icons.check_circle_rounded,
+              size: 36, color: c.success),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -232,10 +236,10 @@ class _ReceiveTabState extends State<ReceiveTab>
             children: [
               Text(
                 l10n.readyToReceive,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 17,
-                  color: Colors.green,
+                  color: c.success,
                 ),
               ),
             ],
@@ -246,6 +250,7 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _buildReceivingContent() {
+    final c = ApexColors.of(context);
     return StreamBuilder<TransferProgress?>(
       stream: TransferProgressService().progressStream,
       builder: (context, snapshot) {
@@ -260,12 +265,12 @@ class _ReceiveTabState extends State<ReceiveTab>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              const SizedBox(
+              SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  color: Colors.purple,
+                  color: c.accent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -275,18 +280,18 @@ class _ReceiveTabState extends State<ReceiveTab>
                   children: [
                     Text(
                       AppLocalizations.of(context).receiving,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.purple,
+                        color: c.accent,
                       ),
                     ),
                     if (senderName != null && senderName.isNotEmpty)
                       Text(
                         AppLocalizations.of(context).fromSender(senderName),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.purple,
+                          color: c.accent,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -295,7 +300,7 @@ class _ReceiveTabState extends State<ReceiveTab>
               ),
               if (p != null)
                 Text(p.speedFormatted,
-                    style: const TextStyle(fontSize: 12, color: Colors.purple)),
+                    style: TextStyle(fontSize: 12, color: c.accent)),
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
@@ -308,16 +313,16 @@ class _ReceiveTabState extends State<ReceiveTab>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
+                    color: c.critical.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border:
-                        Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                        Border.all(color: c.critical.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     AppLocalizations.of(context).cancel,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Colors.red,
+                      color: c.critical,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -337,8 +342,8 @@ class _ReceiveTabState extends State<ReceiveTab>
                 child: LinearProgressIndicator(
                   value: p.percentage / 100,
                   minHeight: 8,
-                  backgroundColor: Colors.purple.withValues(alpha: 0.15),
-                  valueColor: const AlwaysStoppedAnimation(Colors.purple),
+                  backgroundColor: c.accent.withValues(alpha: 0.15),
+                  valueColor: AlwaysStoppedAnimation(c.accent),
                 ),
               ),
               const SizedBox(height: 6),
@@ -346,12 +351,12 @@ class _ReceiveTabState extends State<ReceiveTab>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('${p.percentage.toStringAsFixed(0)}%',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 12,
-                          color: Colors.purple,
+                          color: c.accent,
                           fontWeight: FontWeight.w600)),
                   Text(p.remainingTimeFormatted(AppLocalizations.of(context)),
-                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      style: TextStyle(fontSize: 12, color: c.inactive)),
                 ],
               ),
             ],
@@ -362,15 +367,16 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _buildDeviceCard(Device device, AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            color: c.shadow.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -380,20 +386,20 @@ class _ReceiveTabState extends State<ReceiveTab>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Icon(Icons.phone_android_rounded,
-                size: 16, color: Colors.grey),
+            Icon(Icons.phone_android_rounded,
+                size: 16, color: c.inactive),
             const SizedBox(width: 6),
             Text(l10n.thisDevice,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
-                  color: Colors.grey,
+                  color: c.inactive,
                 )),
           ]),
           const SizedBox(height: 14),
           _infoTile(
             icon: Icons.badge_rounded,
-            iconColor: const Color(0xFF007AFF),
+            iconColor: c.tintBlue,
             label: l10n.deviceName,
             value: device.name,
             editable: true,
@@ -406,7 +412,7 @@ class _ReceiveTabState extends State<ReceiveTab>
             ),
             _infoTile(
               icon: _hostnameIcon(device.type),
-              iconColor: _hostnameColor(device.type),
+              iconColor: _hostnameColor(device.type, c),
               label: _hostnameLabel(device.type, l10n),
               value: device.hostname!,
               copyable: true,
@@ -419,7 +425,7 @@ class _ReceiveTabState extends State<ReceiveTab>
             ),
             _infoTile(
               icon: Icons.wifi_rounded,
-              iconColor: const Color(0xFF34C759),
+              iconColor: c.tintGreen,
               label: l10n.ipAddress,
               value: device.ip,
               copyable: true,
@@ -511,16 +517,16 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   /// لون الأيقونة حسب النوع
-  static Color _hostnameColor(String type) {
+  static Color _hostnameColor(String type, ApexColors c) {
     switch (type) {
       case 'phone':
-        return const Color(0xFF34C759); // أخضر
+        return c.tintGreen;
       case 'tablet':
-        return const Color(0xFF5856D6); // بنفسجي
+        return c.accent;
       case 'tv':
-        return const Color(0xFFFF9500); // برتقالي
+        return c.tintOrange;
       default:
-        return const Color(0xFF5856D6); // desktop
+        return c.accent;
     }
   }
 
@@ -539,8 +545,9 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _buildPcBanner() {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFF007AFF);
+    final color = c.tintBlue;
 
     return GestureDetector(
       onTap: () async {
@@ -563,7 +570,7 @@ class _ReceiveTabState extends State<ReceiveTab>
               color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.computer_rounded, color: color, size: 22),
+            child: Icon(Icons.computer_rounded, color: color, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -572,7 +579,7 @@ class _ReceiveTabState extends State<ReceiveTab>
               children: [
                 Text(
                   AppLocalizations.of(context).pcVersionGet,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     color: color,
@@ -581,20 +588,21 @@ class _ReceiveTabState extends State<ReceiveTab>
                 const SizedBox(height: 2),
                 Text(
                   AppLocalizations.of(context).pcVersionPlatforms,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: c.caption),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.arrow_outward_rounded, size: 18, color: color),
+          Icon(Icons.arrow_outward_rounded, size: 18, color: color),
         ]),
       ),
     );
   }
 
   Widget _buildTipsCard(AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFF5856D6);
+    final color = c.accent;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -606,10 +614,10 @@ class _ReceiveTabState extends State<ReceiveTab>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Icon(Icons.tips_and_updates_rounded, size: 16, color: color),
+            Icon(Icons.tips_and_updates_rounded, size: 16, color: color),
             const SizedBox(width: 6),
             Text(l10n.howToReceive,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                   color: color,
@@ -625,6 +633,7 @@ class _ReceiveTabState extends State<ReceiveTab>
   }
 
   Widget _tipRow(String num, String text) {
+    final c = ApexColors.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -634,15 +643,15 @@ class _ReceiveTabState extends State<ReceiveTab>
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              color: const Color(0xFF5856D6).withValues(alpha: 0.15),
+              color: c.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Center(
               child: Text(num,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF5856D6),
+                    color: c.accent,
                   )),
             ),
           ),

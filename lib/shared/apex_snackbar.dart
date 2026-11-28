@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'apex_colors.dart';
+
 /// SnackBar موحد يُستخدم في كل أنحاء التطبيق
 class ApexSnackBar {
   ApexSnackBar._();
@@ -14,9 +16,10 @@ class ApexSnackBar {
   /// إظهار SnackBar نجاح
   static void success(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 2)}) {
+    final c = ApexColors.of(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
-      backgroundColor: Colors.green,
+      backgroundColor: c.success,
       behavior: SnackBarBehavior.floating,
       width: _width(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -26,9 +29,10 @@ class ApexSnackBar {
 
   /// إظهار SnackBar خطأ
   static void error(BuildContext context, String message) {
+    final c = ApexColors.of(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
-      backgroundColor: Colors.red,
+      backgroundColor: c.critical,
       behavior: SnackBarBehavior.floating,
       width: _width(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

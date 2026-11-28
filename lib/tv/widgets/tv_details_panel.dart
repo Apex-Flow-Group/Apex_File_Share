@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/settings_service.dart';
+import '../../shared/apex_colors.dart';
 
 // ─── Public entry point ───────────────────────────────────────────────────────
 // استدعِ هذه الدالة من tv_home_screen لإظهار الـ panel
@@ -13,7 +14,7 @@ void showTVDetailsPanel(BuildContext context, SettingsService settings) {
     context: context,
     barrierDismissible: true,
     barrierLabel: 'panel',
-    barrierColor: Colors.black54,
+    barrierColor: ApexColors.of(context).shadow.withValues(alpha: 0.54),
     transitionDuration: const Duration(milliseconds: 260),
     pageBuilder: (_, __, ___) => _TVDetailsPanel(settings: settings),
     transitionBuilder: (ctx, anim, _, child) {
@@ -100,6 +101,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = Theme.of(context).colorScheme.primary;
@@ -115,10 +117,10 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
           width: panelW,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F5F7),
+            color: c.screenBackdrop,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.4),
+                color: c.shadow.withValues(alpha: 0.4),
                 blurRadius: 32,
                 offset: isRtl ? const Offset(8, 0) : const Offset(-8, 0),
               ),
@@ -142,7 +144,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
                           _PanelItem(
                             focusNode: _languageFocus,
                             icon: Icons.language_rounded,
-                            iconColor: const Color(0xFF007AFF),
+                            iconColor: c.tintBlue,
                             title: l10n.language,
                             subtitle: _langName(
                                 widget.settings.locale?.languageCode, l10n),
@@ -152,7 +154,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
                           _PanelItem(
                             focusNode: _themeFocus,
                             icon: Icons.contrast_rounded,
-                            iconColor: const Color(0xFF5856D6),
+                            iconColor: c.accent,
                             title: l10n.theme,
                             subtitle:
                                 _themeName(widget.settings.themeMode, l10n),
@@ -167,7 +169,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
                           _PanelItem(
                             focusNode: _permissionFocus,
                             icon: Icons.security_rounded,
-                            iconColor: const Color(0xFF34C759),
+                            iconColor: c.tintGreen,
                             title: l10n.appPermissions,
                             subtitle: l10n.managePermissions,
                             onTap: () => _managePermissions(context, l10n),
@@ -199,14 +201,13 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
 
   Widget _buildPanelHeader(
       BuildContext context, AppLocalizations l10n, bool isDark, Color color) {
+    final c = ApexColors.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.07)
-                : Colors.black.withValues(alpha: 0.07),
+            color: c.veil.withValues(alpha: 0.07),
           ),
         ),
       ),
@@ -225,7 +226,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
+              color: c.heading,
             )),
       ]),
     );
@@ -234,13 +235,14 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
   // ─── Card ──────────────────────────────────────────────────────────────────
 
   Widget _buildCard(BuildContext context, bool isDark, List<_PanelItem> items) {
+    final c = ApexColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+        color: c.dialogSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            color: c.shadow.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -258,9 +260,7 @@ class _TVDetailsPanelState extends State<_TVDetailsPanel> {
                 Divider(
                   height: 1,
                   indent: 52,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.06)
-                      : Colors.black.withValues(alpha: 0.06),
+                  color: c.veil.withValues(alpha: 0.06),
                 ),
               _buildItemTile(context, item, isDark,
                   isFirst: i == 0, isLast: i == items.length - 1),
@@ -503,9 +503,10 @@ class _TVPickerDialogState extends State<_TVPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final color = Theme.of(context).colorScheme.primary;
     return Dialog(
-      backgroundColor: widget.isDark ? const Color(0xFF2C2C2E) : Colors.white,
+      backgroundColor: c.dialogSurface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -580,7 +581,7 @@ class _TVPickerDialogState extends State<_TVPickerDialog> {
                           Icon(item.icon,
                               size: 20,
                               color:
-                                  selected || hasFocus ? color : Colors.grey),
+                                  selected || hasFocus ? color : c.inactive),
                           const SizedBox(width: 12),
                           Expanded(
                               child: Text(item.label,
@@ -625,6 +626,7 @@ class _CloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final color = Theme.of(context).colorScheme.primary;
     return Focus(
       focusNode: focusNode,
@@ -656,7 +658,7 @@ class _CloseButton extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: hasFocus ? Colors.white : color,
+                    color: hasFocus ? c.onTint : color,
                   )),
             ),
           ),

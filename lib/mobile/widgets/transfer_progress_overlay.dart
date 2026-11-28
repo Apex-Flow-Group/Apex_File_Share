@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/transfer_progress.dart';
 import '../../services/transfer_progress_service.dart';
+import '../../shared/apex_colors.dart';
 
 /// يعرض شريط تقدم الاستقبال عائماً فوق كل شيء
 /// يُستدعى مرة واحدة في main.dart كـ wrapper
@@ -107,6 +108,7 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
   }
 
   Widget _buildCard(BuildContext context) {
+    final c = ApexColors.of(context);
     final p = _progress;
     if (p == null) {
       return const SizedBox.shrink();
@@ -125,15 +127,14 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
           filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
           child: Container(
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF2C2C2E) : Colors.white)
-                  .withValues(alpha: 0.95),
+              color: c.dialogSurface.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: color.withValues(alpha: isDark ? 0.25 : 0.15),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.1),
+                  color: c.shadow.withValues(alpha: isDark ? 0.35 : 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -175,9 +176,7 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? Colors.white
-                                  : const Color(0xFF1C1C1E),
+                              color: c.titleInk,
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -198,7 +197,7 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
                             '${_formatSize(p.transferredBytes)} / ${_formatSize(p.totalBytes)}  •  ${p.speedFormatted}',
                             style: TextStyle(
                               fontSize: 11,
-                              color: isDark ? Colors.white54 : Colors.black45,
+                              color: c.inkSoft,
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -224,13 +223,13 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: c.critical.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.close_rounded,
                           size: 16,
-                          color: Colors.red,
+                          color: c.critical,
                         ),
                       ),
                     ),
@@ -253,7 +252,7 @@ class _ReceiveProgressFloatingState extends State<_ReceiveProgressFloating>
                   p.remainingTimeFormatted(AppLocalizations.of(context)),
                   style: TextStyle(
                     fontSize: 10,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: c.inkFaint,
                     decoration: TextDecoration.none,
                   ),
                 ),

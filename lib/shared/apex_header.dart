@@ -104,11 +104,12 @@ class ApexSheetTop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final handle = Container(
       width: 36,
       height: 4,
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.3),
+        color: c.inactive.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(2),
       ),
     );

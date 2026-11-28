@@ -514,30 +514,31 @@ class _ClipboardBannerState extends State<_ClipboardBanner> {
   // ─── colour per type ──────────────────────────────────────────────────────
 
   Color get _color {
+    final c = ApexColors.of(context);
     if (widget.item.type == ClipboardItemType.image) {
-      return const Color(0xFF007AFF); // أزرق — صورة
+      return c.tintBlue; // صورة
     }
     if (widget.item.type == ClipboardItemType.text) {
-      return const Color(0xFF30B0C7); // تيل — نص
+      return c.tintTeal; // نص
     }
     switch (widget.item.extensionHint) {
       case 'pdf':
-        return const Color(0xFFFF3B30);
+        return c.tintRed;
       case 'zip':
       case 'rar':
       case '7z':
-        return const Color(0xFFFF9500);
+        return c.tintOrange;
       case 'mp4':
       case 'mov':
       case 'avi':
       case 'mkv':
-        return const Color(0xFF5856D6);
+        return c.accent;
       case 'mp3':
       case 'wav':
       case 'aac':
-        return const Color(0xFFFF2D55);
+        return c.tintPink;
       default:
-        return const Color(0xFF34C759);
+        return c.tintGreen;
     }
   }
 
@@ -567,6 +568,7 @@ class _ClipboardBannerState extends State<_ClipboardBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final color = _color;
@@ -627,7 +629,7 @@ class _ClipboardBannerState extends State<_ClipboardBanner> {
                                 : 13,
                             fontWeight: FontWeight.w600,
                             color:
-                                isDark ? Colors.white : const Color(0xFF1C1C1E),
+                                c.titleInk,
                           ),
                         ),
                       ),
@@ -645,7 +647,7 @@ class _ClipboardBannerState extends State<_ClipboardBanner> {
                           _formatSize(_fileSizeBytes!),
                           style: TextStyle(
                             fontSize: 11,
-                            color: isDark ? Colors.white54 : Colors.black45,
+                            color: c.inkSoft,
                           ),
                         ),
                       ],
@@ -691,14 +693,14 @@ class _ClipboardBannerState extends State<_ClipboardBanner> {
                 width: 26,
                 height: 26,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black)
+                  color: c.veil
                       .withValues(alpha: 0.07),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.close_rounded,
                   size: 14,
-                  color: isDark ? Colors.white54 : Colors.black45,
+                  color: c.inkSoft,
                 ),
               ),
             ),

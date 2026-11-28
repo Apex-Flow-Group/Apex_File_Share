@@ -136,6 +136,7 @@ class SettingsSheets {
 
   static void showPermissionsSheet(
       BuildContext context, AppLocalizations l10n) async {
+    final c = ApexColors.of(context);
     final perms = <_PermissionItem>[];
 
     if (Platform.isAndroid) {
@@ -143,27 +144,27 @@ class SettingsSheets {
       perms.addAll([
         if (androidInfo <= 32)
           _PermissionItem(l10n.location, Icons.location_on_rounded,
-              const Color(0xFF007AFF), Permission.locationWhenInUse),
+              c.tintBlue, Permission.locationWhenInUse),
         _PermissionItem(l10n.bluetooth, Icons.bluetooth_rounded,
-            const Color(0xFF5856D6), Permission.bluetoothScan),
+            c.accent, Permission.bluetoothScan),
         if (androidInfo >= 33)
           _PermissionItem(l10n.nearbyDevices, Icons.sensors_rounded,
-              const Color(0xFF34C759), Permission.nearbyWifiDevices),
+              c.tintGreen, Permission.nearbyWifiDevices),
         if (androidInfo >= 33)
           _PermissionItem(l10n.storageLabel, Icons.photo_library_rounded,
-              const Color(0xFFFF9500), Permission.photos)
+              c.tintOrange, Permission.photos)
         else
           _PermissionItem(l10n.storageLabel, Icons.folder_rounded,
-              const Color(0xFFFF9500), Permission.storage),
+              c.tintOrange, Permission.storage),
       ]);
     } else if (Platform.isIOS) {
       perms.addAll([
         _PermissionItem(l10n.location, Icons.location_on_rounded,
-            const Color(0xFF007AFF), Permission.location),
+            c.tintBlue, Permission.location),
         _PermissionItem(l10n.bluetooth, Icons.bluetooth_rounded,
-            const Color(0xFF5856D6), Permission.bluetooth),
+            c.accent, Permission.bluetooth),
         _PermissionItem(l10n.storageLabel, Icons.photo_library_rounded,
-            const Color(0xFFFF9500), Permission.photos),
+            c.tintOrange, Permission.photos),
       ]);
     }
 
@@ -190,11 +191,11 @@ class SettingsSheets {
         child: Container(
           margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           decoration: BoxDecoration(
-            color: isDark ? Colors.grey[900] : Colors.white,
+            color: c.sheetSurface,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+                color: c.shadow.withValues(alpha: isDark ? 0.5 : 0.15),
                 blurRadius: 32,
                 offset: const Offset(0, -4),
               ),
@@ -208,7 +209,7 @@ class SettingsSheets {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: c.inactive.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -225,10 +226,10 @@ class SettingsSheets {
                 final granted = status.isGranted;
                 final restricted = status.isPermanentlyDenied;
                 final color = granted
-                    ? Colors.green
+                    ? c.success
                     : restricted
-                        ? Colors.red
-                        : Colors.orange;
+                        ? c.critical
+                        : c.warning;
                 final label = granted
                     ? l10n.permGranted
                     : restricted

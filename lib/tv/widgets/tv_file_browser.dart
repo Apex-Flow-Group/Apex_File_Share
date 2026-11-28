@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../shared/apex_colors.dart';
 import '../../utils/path_name.dart';
 
 const _storageRoot = '/storage/emulated/0';
@@ -165,6 +166,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = Theme.of(context).colorScheme.primary;
     final showBack = _pathStack.length > 1;
@@ -198,7 +200,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
         }
       },
       child: Dialog(
-      backgroundColor: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F5F7),
+      backgroundColor: c.screenBackdrop,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 80, vertical: 40),
       child: Column(
@@ -209,9 +211,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.07)
-                      : Colors.black.withValues(alpha: 0.07),
+                  color: c.veil.withValues(alpha: 0.07),
                 ),
               ),
             ),
@@ -355,9 +355,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
             decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.07)
-                      : Colors.black.withValues(alpha: 0.07),
+                  color: c.veil.withValues(alpha: 0.07),
                 ),
               ),
             ),
@@ -365,7 +363,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
               Expanded(
                 child: _FooterButton(
                   label: AppLocalizations.of(context).cancel,
-                  color: Colors.grey,
+                  color: c.inactive,
                   onTap: () => Navigator.of(context).pop(null),
                 ),
               ),
@@ -380,7 +378,7 @@ class _TVFileBrowserState extends State<_TVFileBrowser> {
                       : _selected.isEmpty
                           ? AppLocalizations.of(context).pickFile
                           : AppLocalizations.of(context).sendCount(_selected.length),
-                  color: _canConfirm ? color : Colors.grey,
+                  color: _canConfirm ? color : c.inactive,
                   onTap: _canConfirm ? _confirm : null,
                 ),
               ),
@@ -412,6 +410,7 @@ class _BrowserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return Focus(
       focusNode: focusNode,
       onKeyEvent: (_, event) => onKey(event),
@@ -445,10 +444,10 @@ class _BrowserTile extends StatelessWidget {
               Container(
                 width: 36, height: 36,
                 decoration: BoxDecoration(
-                  color: _iconColor(item).withValues(alpha: 0.15),
+                  color: _iconColor(item, c).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(_iconData(item), size: 20, color: _iconColor(item)),
+                child: Icon(_iconData(item), size: 20, color: _iconColor(item, c)),
               ),
               const SizedBox(width: 12),
               // اسم
@@ -509,33 +508,33 @@ class _BrowserTile extends StatelessWidget {
     return Icons.insert_drive_file_rounded;
   }
 
-  Color _iconColor(_BrowserItem item) {
+  Color _iconColor(_BrowserItem item, ApexColors c) {
     if (item.isBack) {
-      return Colors.grey;
+      return c.inactive;
     }
     if (item.isDir) {
-      return const Color(0xFFFF9500);
+      return c.tintOrange;
     }
     final ext = item.name.split('.').last.toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(ext)) {
-      return const Color(0xFF007AFF);
+      return c.tintBlue;
     }
     if (['mp4', 'mkv', 'avi', 'mov'].contains(ext)) {
-      return const Color(0xFF5856D6);
+      return c.accent;
     }
     if (['mp3', 'wav', 'flac', 'm4a'].contains(ext)) {
-      return const Color(0xFFFF2D55);
+      return c.tintPink;
     }
     if (['pdf'].contains(ext)) {
-      return const Color(0xFFFF3B30);
+      return c.tintRed;
     }
     if (['apk'].contains(ext)) {
-      return const Color(0xFF34C759);
+      return c.tintGreen;
     }
     if (['zip', 'rar', '7z'].contains(ext)) {
-      return const Color(0xFFFF9500);
+      return c.tintOrange;
     }
-    return const Color(0xFF8E8E93);
+    return c.tintGrey;
   }
 }
 
@@ -564,6 +563,7 @@ class _FooterButtonState extends State<_FooterButton> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return Focus(
       focusNode: _focus,
       onKeyEvent: (_, event) {
@@ -586,7 +586,7 @@ class _FooterButtonState extends State<_FooterButton> {
             decoration: BoxDecoration(
               color: enabled
                   ? (hasFocus ? widget.color : widget.color.withValues(alpha: 0.12))
-                  : Colors.grey.withValues(alpha: 0.1),
+                  : c.inactive.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: hasFocus
                   ? Border.all(color: widget.color, width: 2)
@@ -599,8 +599,8 @@ class _FooterButtonState extends State<_FooterButton> {
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: enabled
-                      ? (hasFocus ? Colors.white : widget.color)
-                      : Colors.grey,
+                      ? (hasFocus ? c.onTint : widget.color)
+                      : c.inactive,
                 ),
               ),
             ),

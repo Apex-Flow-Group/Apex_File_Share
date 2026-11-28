@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../services/transfer_progress_service.dart';
 import '../services/update_service.dart';
+import '../shared/apex_colors.dart';
 import '../shared/apex_header.dart';
 import '../shared/apex_icons.dart';
 import '../shared/apex_snackbar.dart';
@@ -151,6 +152,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Widget _buildContent(BuildContext context, AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -168,7 +170,7 @@ class _AboutScreenState extends State<AboutScreen> {
         const SizedBox(height: 12),
         const Text('Apex Transfer',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        Text(_version, style: const TextStyle(color: Colors.grey)),
+        Text(_version, style: TextStyle(color: c.inactive)),
         const SizedBox(height: 12),
         // ─── زر التحديث — Android فقط (Desktop يستخدم QR card) ──────────────
         if (!kIsWeb && Platform.isAndroid) ...[
@@ -177,7 +179,7 @@ class _AboutScreenState extends State<AboutScreen> {
         ],
         Text(l10n.appDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600])),
+            style: TextStyle(color: c.caption)),
         const SizedBox(height: 28),
         // ── Android QR (Desktop only) ──────────────────────────
         if (!kIsWeb && (Platform.isWindows || Platform.isLinux))
@@ -203,7 +205,7 @@ class _AboutScreenState extends State<AboutScreen> {
             'GitHub',
             'https://github.com/Apex-Flow-Group/File_Share',
             icon: Icons.code_rounded,
-            color: Colors.grey[700]!,
+            color: c.captionStrong,
           ),
         ]),
         const SizedBox(height: 20),
@@ -213,28 +215,29 @@ class _AboutScreenState extends State<AboutScreen> {
         ]),
         const SizedBox(height: 28),
         Text(l10n.madeInArabWorld,
-            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            style: TextStyle(fontSize: 12, color: c.inactive)),
         const SizedBox(height: 4),
-        const Text('contact.apex.flow@gmail.com',
-            style: TextStyle(fontSize: 12, color: Colors.blue)),
+        Text('contact.apex.flow@gmail.com',
+            style: TextStyle(fontSize: 12, color: c.info)),
       ],
     );
   }
 
   Widget _buildAndroidCard(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
-    const color = Color(0xFF34C759);
+    final color = c.tintGreen;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            color: c.shadow.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -249,7 +252,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.android_rounded, color: color, size: 22),
+              child: Icon(Icons.android_rounded, color: color, size: 22),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -263,7 +266,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   Text(
                     l10n.aboutScanWithPhone,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: c.caption),
                   ),
                 ],
               ),
@@ -276,7 +279,7 @@ class _AboutScreenState extends State<AboutScreen> {
               // QR Code
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: c.paper,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: color.withValues(alpha: 0.3)),
                 ),
@@ -285,7 +288,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   data: _kPlayStoreUrl,
                   version: QrVersions.auto,
                   size: 120,
-                  backgroundColor: Colors.white,
+                  backgroundColor: c.paper,
                 ),
               ),
               const SizedBox(width: 16),
@@ -295,7 +298,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   children: [
                     Text(
                       l10n.aboutOrTapButton,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: c.caption),
                     ),
                     const SizedBox(height: 10),
                     SizedBox(
@@ -338,7 +341,8 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Widget _buildLink(BuildContext context, String title, String url,
       {IconData icon = Icons.link, Color? color}) {
-    final linkColor = color ?? Colors.blue;
+    final c = ApexColors.of(context);
+    final linkColor = color ?? c.info;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: GestureDetector(
@@ -360,6 +364,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Widget _buildLegalText(String title, String content) {
+    final c = ApexColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -370,7 +375,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
           const SizedBox(height: 4),
           Text(content,
-              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              style: TextStyle(fontSize: 12, color: c.inactive)),
         ],
       ),
     );
@@ -380,6 +385,7 @@ class _AboutScreenState extends State<AboutScreen> {
   // يظهر على Android فقط — Desktop يستخدم QR card أدناه بدلاً منه
 
   Widget _buildUpdateButton(BuildContext context, AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     switch (_checkState) {
       case _CheckState.idle:
         return _UpdateTile(
@@ -398,7 +404,7 @@ class _AboutScreenState extends State<AboutScreen> {
       case _CheckState.upToDate:
         return _UpdateTile(
           icon: Icons.check_circle_rounded,
-          color: Colors.green,
+          color: c.success,
           label: l10n.updateUpToDate,
           subtitle: l10n.updateUpToDateHint,
           onTap: _checkForUpdate, // يتيح إعادة التحقق
@@ -406,7 +412,7 @@ class _AboutScreenState extends State<AboutScreen> {
       case _CheckState.available:
         return _UpdateTile(
           icon: Icons.new_releases_rounded,
-          color: const Color(0xFFFF9500),
+          color: c.tintOrange,
           label: l10n.updateAvailable,
           subtitle: l10n.updateTapToDownload,
           onTap: _downloadUpdate,
@@ -422,7 +428,7 @@ class _AboutScreenState extends State<AboutScreen> {
       case _CheckState.readyToInstall:
         return _UpdateTile(
           icon: Icons.install_mobile_rounded,
-          color: Colors.green,
+          color: c.success,
           label: l10n.updateReadyToInstall,
           subtitle: l10n.updateTapToRestart,
           onTap: _installUpdate,
@@ -466,6 +472,7 @@ class _UpdateTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -504,8 +511,8 @@ class _UpdateTile extends StatelessWidget {
                           child: Container(
                             width: 8,
                             height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFF3B30),
+                            decoration: BoxDecoration(
+                              color: c.tintRed,
                               shape: BoxShape.circle,
                             ),
                           ),

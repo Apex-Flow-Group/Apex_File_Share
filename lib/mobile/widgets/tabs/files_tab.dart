@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../features/receive/data/sender_log.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../shared/apex_bottom_sheet.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_header.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../utils/path_name.dart';
@@ -176,8 +177,9 @@ class _FilesTabState extends State<FilesTab>
   // ─── Header ────────────────────────────────────────────────────────────────
 
   Widget _buildHeader() {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
-    const color = Color(0xFFFF9500);
+    final color = c.tintOrange;
 
     return ApexHeader(
       icon: Icons.folder_rounded,
@@ -200,6 +202,7 @@ class _FilesTabState extends State<FilesTab>
   // ─── Selection Bar ─────────────────────────────────────────────────────────
 
   Widget _buildSelectionBar() {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final color = Theme.of(context).colorScheme.primary;
     return Padding(
@@ -251,14 +254,14 @@ class _FilesTabState extends State<FilesTab>
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: widget.selectedFiles.isEmpty
-                    ? Colors.grey.withValues(alpha: 0.12)
-                    : Colors.red.withValues(alpha: 0.12),
+                    ? c.inactive.withValues(alpha: 0.12)
+                    : c.critical.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(Icons.delete_rounded,
                   size: 16,
                   color:
-                      widget.selectedFiles.isEmpty ? Colors.grey : Colors.red),
+                      widget.selectedFiles.isEmpty ? c.inactive : c.critical),
             ),
           ),
         ],
@@ -340,6 +343,7 @@ class _FilesTabState extends State<FilesTab>
   // ─── File List ─────────────────────────────────────────────────────────────
 
   Widget _buildList() {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final bottomPadding =
         MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 16;
@@ -359,11 +363,11 @@ class _FilesTabState extends State<FilesTab>
                   Container(
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF9500).withValues(alpha: 0.1),
+                      color: c.tintOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(32),
                     ),
-                    child: const Icon(Icons.folder_open_rounded,
-                        size: 64, color: Color(0xFFFF9500)),
+                    child: Icon(Icons.folder_open_rounded,
+                        size: 64, color: c.tintOrange),
                   ),
                   const SizedBox(height: 20),
                   Text(l10n.noFiles,
@@ -395,11 +399,11 @@ class _FilesTabState extends State<FilesTab>
                 Container(
                   padding: const EdgeInsets.all(28),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9500).withValues(alpha: 0.1),
+                    color: c.tintOrange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(32),
                   ),
-                  child: const Icon(Icons.folder_open_rounded,
-                      size: 64, color: Color(0xFFFF9500)),
+                  child: Icon(Icons.folder_open_rounded,
+                      size: 64, color: c.tintOrange),
                 ),
                 const SizedBox(height: 20),
                 Text(l10n.noFiles,

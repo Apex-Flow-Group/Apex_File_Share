@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/transfer_progress_service.dart';
+import '../../shared/apex_colors.dart';
 
 /// Reusable widget that displays file transfer progress with batch support.
 class TransferProgressIndicator extends StatelessWidget {
@@ -11,6 +12,7 @@ class TransferProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final svc = TransferProgressService();
 
@@ -53,7 +55,7 @@ class TransferProgressIndicator extends StatelessWidget {
               ),
               if (speed.isNotEmpty)
                 Text(speed,
-                    style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    style: TextStyle(fontSize: 11, color: c.inactive)),
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: onCancel,
@@ -61,16 +63,16 @@ class TransferProgressIndicator extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
+                    color: c.critical.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border:
-                        Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                        Border.all(color: c.critical.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     l10n.cancel,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Colors.red,
+                      color: c.critical,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -110,12 +112,12 @@ class TransferProgressIndicator extends StatelessWidget {
               children: [
                 Text(
                   pct > 0 ? '${pct.toStringAsFixed(0)}%' : '',
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  style: TextStyle(fontSize: 10, color: c.inactive),
                 ),
                 if (p != null)
                   Text(
                     p.remainingTimeFormatted(l10n),
-                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    style: TextStyle(fontSize: 10, color: c.inactive),
                   ),
               ],
             ),

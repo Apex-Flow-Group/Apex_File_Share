@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/share_folder_service.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_icons.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../shared/file_open_message.dart';
@@ -140,9 +141,10 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFF5856D6);
+    final color = c.accent;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,15 +156,15 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(children: [
-                const Icon(ApexIcons.sharedFolder,
-                    size: 14, color: Color(0xFF5856D6)),
+                Icon(ApexIcons.sharedFolder,
+                    size: 14, color: c.accent),
                 const SizedBox(width: 6),
                 Text(
                   l10n.sharedFolder,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF5856D6),
+                    color: c.accent,
                   ),
                 ),
               ]),
@@ -193,8 +195,8 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
                       color: color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(ApexIcons.sharedFolder,
-                        color: Color(0xFF5856D6), size: 20),
+                    child: Icon(ApexIcons.sharedFolder,
+                        color: c.accent, size: 20),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -254,6 +256,7 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
   }
 
   Widget _buildEmpty(AppLocalizations l10n, bool isDark) {
+    final c = ApexColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Center(
@@ -261,7 +264,7 @@ class _SharedFolderSectionState extends State<SharedFolderSection> {
           children: [
             Icon(Icons.folder_open_rounded,
                 size: 40,
-                color: const Color(0xFF5856D6).withValues(alpha: 0.4)),
+                color: c.accent.withValues(alpha: 0.4)),
             const SizedBox(height: 8),
             Text(l10n.sharedFolderEmpty,
                 style: TextStyle(
@@ -350,7 +353,8 @@ class _ShareFileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = Color(0xFF5856D6);
+    final c = ApexColors.of(context);
+    final color = c.accent;
     return InkWell(
       onTap: onOpen,
       borderRadius: BorderRadius.circular(10),
@@ -386,8 +390,8 @@ class _ShareFileTile extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded,
-                  size: 18, color: Colors.red),
+              icon: Icon(Icons.delete_outline_rounded,
+                  size: 18, color: c.critical),
               tooltip: AppLocalizations.of(context).delete,
               onPressed: onDelete,
             ),

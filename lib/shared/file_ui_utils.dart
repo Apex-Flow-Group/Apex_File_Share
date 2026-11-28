@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'apex_colors.dart';
+
 /// دوال مشتركة لعرض معلومات الملفات — تستخدم في Mobile و TV
 class FileUiUtils {
   FileUiUtils._();
@@ -46,41 +48,41 @@ class FileUiUtils {
   }
 
   /// لون الملف حسب الامتداد
-  static Color fileColor(String name) {
+  static Color fileColor(String name, ApexColors c) {
     final ext = name.split('.').last.toLowerCase();
     switch (ext) {
       case 'pdf':
-        return const Color(0xFFFF3B30);
+        return c.tintRed;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'gif':
       case 'webp':
-        return const Color(0xFF007AFF);
+        return c.tintBlue;
       case 'mp4':
       case 'avi':
       case 'mkv':
       case 'mov':
-        return const Color(0xFF5856D6);
+        return c.accent;
       case 'mp3':
       case 'wav':
       case 'flac':
       case 'm4a':
-        return const Color(0xFFFF2D55);
+        return c.tintPink;
       case 'zip':
       case 'rar':
       case '7z':
-        return const Color(0xFFFF9500);
+        return c.tintOrange;
       case 'apk':
-        return const Color(0xFF34C759);
+        return c.tintGreen;
       case 'doc':
       case 'docx':
-        return const Color(0xFF007AFF);
+        return c.tintBlue;
       case 'xls':
       case 'xlsx':
-        return const Color(0xFF34C759);
+        return c.tintGreen;
       default:
-        return const Color(0xFF8E8E93);
+        return c.tintGrey;
     }
   }
 

@@ -20,6 +20,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../models/device.dart';
 import '../../platform/media_store_save.dart';
 import '../../services/share_folder_service.dart';
+import '../../shared/apex_colors.dart';
 import '../../shared/apex_header.dart';
 import '../../shared/apex_icons.dart';
 import '../../shared/apex_snackbar.dart';
@@ -304,14 +305,15 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFF5856D6);
+    final color = c.accent;
     final isDesktop = MediaQuery.of(context).size.width >= 900;
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7),
+          c.browserBackdrop,
       body: SafeArea(
         top: false,
         child: Column(
@@ -338,6 +340,7 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
 
   Widget _buildHeader(
       AppLocalizations l10n, bool isDark, Color color, bool isDesktop) {
+    final c = ApexColors.of(context);
     return ApexHeader(
       icon: ApexIcons.sharedFolder,
       title: l10n.sharedFolder,
@@ -351,13 +354,13 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.07),
+              color: c.veil.withValues(alpha: 0.07),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 18,
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: c.inkIcon,
             ),
           ),
         ),
@@ -405,6 +408,7 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
   }
 
   Widget _buildContent(AppLocalizations l10n, bool isDark, Color color) {
+    final c = ApexColors.of(context);
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -417,12 +421,12 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
             Container(
               padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.08),
+                color: c.critical.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(32),
               ),
               // The device answered: it is reachable, so no network icon.
               child: Icon(_refusal == null ? Icons.wifi_off_rounded : ApexIcons.block,
-                  size: 56, color: Colors.red),
+                  size: 56, color: c.critical),
             ),
             const SizedBox(height: 20),
             Padding(
@@ -571,16 +575,17 @@ class _FileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
-    const color = Color(0xFF5856D6);
+    final color = c.accent;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+            color: c.shadow.withValues(alpha: isDark ? 0.25 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -631,7 +636,7 @@ class _FileTile extends StatelessWidget {
                 ),
                 // زر تنزيل
                 inProgress
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 26,
                         height: 26,
                         child: CircularProgressIndicator(
@@ -649,7 +654,7 @@ class _FileTile extends StatelessWidget {
                               color: color.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.download_rounded,
                               size: 18,
                               color: color,
@@ -670,7 +675,7 @@ class _FileTile extends StatelessWidget {
                     value: progress,
                     borderRadius: BorderRadius.circular(4),
                     backgroundColor: color.withValues(alpha: 0.12),
-                    valueColor: const AlwaysStoppedAnimation(color),
+                    valueColor: AlwaysStoppedAnimation(color),
                     minHeight: 5,
                   ),
                   const SizedBox(height: 4),
@@ -678,9 +683,9 @@ class _FileTile extends StatelessWidget {
                     alignment: AlignmentDirectional.centerEnd,
                     child: Text(
                       '${((progress ?? 0) * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF5856D6),
+                        color: c.accent,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

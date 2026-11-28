@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../features/receive/data/sender_log.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/file_ui_utils.dart';
 import '../../../shared/sender_line_text.dart';
 import '../tv_focusable_widgets.dart';
@@ -61,7 +62,8 @@ class _TVFileTileState extends State<TVFileTile> {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = FileUiUtils.fileColor(widget.name);
+    final c = ApexColors.of(context);
+    final iconColor = FileUiUtils.fileColor(widget.name, c);
     final color = Theme.of(context).colorScheme.primary;
 
     return Focus(
@@ -94,7 +96,7 @@ class _TVFileTileState extends State<TVFileTile> {
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: widget.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              color: c.cardSurface,
               borderRadius: BorderRadius.circular(18),
               border: hasFocus ? Border.all(color: color, width: 2.5) : null,
               boxShadow: hasFocus
@@ -104,8 +106,7 @@ class _TVFileTileState extends State<TVFileTile> {
                     ]
                   : [
                       BoxShadow(
-                        color: Colors.black
-                            .withValues(alpha: widget.isDark ? 0.25 : 0.06),
+                        color: c.shadow.withValues(alpha: widget.isDark ? 0.25 : 0.06),
                         blurRadius: 12,
                         offset: const Offset(0, 3),
                       )
@@ -130,7 +131,7 @@ class _TVFileTileState extends State<TVFileTile> {
                   ],
                 ),
                 child: Icon(FileUiUtils.fileIcon(widget.name),
-                    color: Colors.white, size: 24),
+                    color: c.onTint, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -176,14 +177,14 @@ class _TVFileTileState extends State<TVFileTile> {
   }
 
   void _showOptions(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = Theme.of(context).colorScheme.primary;
 
     showDialog(
       context: context,
       builder: (dialogContext) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+        backgroundColor: c.dialogSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -221,7 +222,7 @@ class _TVFileTileState extends State<TVFileTile> {
               TVDialogOption(
                 icon: Icons.delete_rounded,
                 label: l10n.delete,
-                color: Colors.red,
+                color: c.critical,
                 autofocus: false,
                 onTap: () {
                   Navigator.pop(dialogContext);

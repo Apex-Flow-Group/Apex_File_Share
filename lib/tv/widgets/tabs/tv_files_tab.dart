@@ -8,6 +8,7 @@ import '../../../core/apex_core.dart';
 import '../../../features/receive/data/sender_log.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/file_operations_service.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_header.dart';
 import '../../../shared/apex_snackbar.dart';
 import '../../../shared/file_open_message.dart';
@@ -104,17 +105,18 @@ class _TVFilesTabState extends State<TVFilesTab> {
   }
 
   Widget _buildList(AppLocalizations l10n, bool isDark) {
+    final c = ApexColors.of(context);
     if (_files == null || _files!.isEmpty) {
       return Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF9500).withValues(alpha: 0.1),
+              color: c.tintOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(32),
             ),
-            child: const Icon(Icons.folder_open_rounded,
-                size: 64, color: Color(0xFFFF9500)),
+            child: Icon(Icons.folder_open_rounded,
+                size: 64, color: c.tintOrange),
           ),
           const SizedBox(height: 20),
           Text(l10n.noFiles,
@@ -201,16 +203,16 @@ class _TVDeleteConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final c = ApexColors.of(context);
     return Dialog(
-      backgroundColor: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+      backgroundColor: c.dialogSurface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.delete_rounded, color: Colors.red, size: 40),
+            Icon(Icons.delete_rounded, color: c.critical, size: 40),
             const SizedBox(height: 12),
             Text(l10n.deleteFiles,
                 style:
@@ -225,7 +227,7 @@ class _TVDeleteConfirmDialog extends StatelessWidget {
                 Expanded(
                   child: TVDialogButton(
                     label: l10n.cancel,
-                    color: Colors.grey,
+                    color: c.inactive,
                     autofocus: true,
                     onTap: () => Navigator.pop(context, false),
                   ),
@@ -234,7 +236,7 @@ class _TVDeleteConfirmDialog extends StatelessWidget {
                 Expanded(
                   child: TVDialogButton(
                     label: l10n.delete,
-                    color: Colors.red,
+                    color: c.critical,
                     autofocus: false,
                     onTap: () => Navigator.pop(context, true),
                   ),
@@ -270,7 +272,8 @@ class _TVFocusableRefreshButtonState extends State<_TVFocusableRefreshButton> {
 
   @override
   Widget build(BuildContext context) {
-    const color = Color(0xFFFF9500);
+    final c = ApexColors.of(context);
+    final color = c.tintOrange;
     return Focus(
       focusNode: _focusNode,
       onKeyEvent: (_, event) {

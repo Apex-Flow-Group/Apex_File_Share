@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../models/device.dart';
+import 'apex_colors.dart';
 
 /// One icon and color per device type, for the phone and the TV cards alike.
 IconData deviceIcon(Device device) {
@@ -16,15 +17,15 @@ IconData deviceIcon(Device device) {
   }
 }
 
-Color deviceColor(Device device) {
+Color deviceColor(Device device, ApexColors c) {
   switch (device.type.toLowerCase()) {
     case 'tv':
-      return const Color(0xFF5856D6);
+      return c.accent;
     case 'desktop':
-      return const Color(0xFF007AFF);
+      return c.tintBlue;
     case 'tablet':
-      return const Color(0xFFFF9500);
+      return c.tintOrange;
     default:
-      return const Color(0xFF34C759);
+      return c.tintGreen;
   }
 }

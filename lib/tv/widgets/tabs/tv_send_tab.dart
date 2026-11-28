@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/device.dart';
 import '../../../services/transfer_progress_service.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/apex_header.dart';
 import '../../../shared/apex_icons.dart';
 import '../../../shared/radar_painter.dart';
@@ -79,6 +80,7 @@ class _TVSendTabState extends State<TVSendTab> with TickerProviderStateMixin {
   }
 
   Widget _buildScanning() {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final color = Theme.of(context).colorScheme.primary;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -177,7 +179,7 @@ class _TVSendTabState extends State<TVSendTab> with TickerProviderStateMixin {
               TVFocusableButton(
                 focusNode: widget.contentFocusNode ?? _retryFocus,
                 onTap: widget.onRetry,
-                color: Colors.orange,
+                color: c.warning,
                 label: l10n.retry,
               ),
           ]),
@@ -288,17 +290,18 @@ class _TVSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, top: 4),
       child: Row(children: [
-        Icon(icon, size: 14, color: isDark ? Colors.white38 : Colors.black38),
+        Icon(icon, size: 14, color: c.inkFaint),
         const SizedBox(width: 6),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white38 : Colors.black38,
+            color: c.inkFaint,
           ),
         ),
       ]),

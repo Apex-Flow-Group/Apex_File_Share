@@ -83,8 +83,8 @@ class _Tile extends StatelessWidget {
             onTap: () => onRemove(file),
             child: CircleAvatar(
                 radius: 13,
-                backgroundColor: Colors.black.withValues(alpha: 0.55),
-                child: const Icon(Icons.close_rounded, color: Colors.white, size: 16)),
+                backgroundColor: c.shadow.withValues(alpha: 0.55),
+                child: Icon(Icons.close_rounded, color: c.onTint, size: 16)),
           ),
         ),
       ),

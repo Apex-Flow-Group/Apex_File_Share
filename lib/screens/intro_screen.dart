@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../mobile/screens/tour_screen.dart';
 import '../services/settings_service.dart';
+import '../shared/apex_colors.dart';
 import '../shared/intro_button.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -241,7 +242,7 @@ class _AnimatedBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: _BackgroundPainter(progress: progress),
+      painter: _BackgroundPainter(progress: progress, c: ApexColors.of(context)),
       child: Container(),
     );
   }
@@ -249,8 +250,9 @@ class _AnimatedBackground extends StatelessWidget {
 
 class _BackgroundPainter extends CustomPainter {
   final double progress;
+  final ApexColors c;
 
-  _BackgroundPainter({required this.progress});
+  _BackgroundPainter({required this.progress, required this.c});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -259,10 +261,10 @@ class _BackgroundPainter extends CustomPainter {
     final gradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: const [
-        Color(0xFF1A237E),
-        Color(0xFF283593),
-        Color(0xFF1A237E),
+      colors: [
+        c.introNight,
+        c.introNightLift,
+        c.introNight,
       ],
       stops: [
         0.0 + sin(progress * pi * 2) * 0.1,
@@ -278,7 +280,7 @@ class _BackgroundPainter extends CustomPainter {
       final x = (i * 50.0 + progress * 100) % size.width;
       final y = (i * 30.0 + sin(progress * pi + i) * 50) % size.height;
       final paint = Paint()
-        ..color = const Color(0xFF6750A4).withValues(alpha: 0.1)
+        ..color = c.brand.withValues(alpha: 0.1)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
       canvas.drawCircle(Offset(x, y), 30, paint);
     }
@@ -301,17 +303,18 @@ class _ShinyText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return ShaderMask(
       shaderCallback: (bounds) {
         return LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: const [
-            Color(0xFF6750A4),
-            Color(0xFF9575CD),
-            Color(0xFFE1BEE7),
-            Color(0xFF9575CD),
-            Color(0xFF6750A4),
+          colors: [
+            c.brand,
+            c.brandSoft,
+            c.brandPale,
+            c.brandSoft,
+            c.brand,
           ],
           stops: [
             max(0, shimmerProgress - 0.3),
@@ -328,7 +331,7 @@ class _ShinyText extends StatelessWidget {
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: c.onTint,
           letterSpacing: 2,
         ),
       ),

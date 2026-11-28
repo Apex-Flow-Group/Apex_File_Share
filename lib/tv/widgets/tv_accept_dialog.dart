@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../core/core_models.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../shared/apex_colors.dart';
 import '../../shared/apex_icons.dart';
 import '../../shared/closes_with_request.dart';
 import '../../shared/file_ui_utils.dart';
@@ -29,8 +30,8 @@ class TVAcceptDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Connecting, opening the folder and receiving are separate answers, so
     // they never share a title.
     final (icon, title, question) = switch (request.kind) {
@@ -54,7 +55,7 @@ class TVAcceptDialog extends StatelessWidget {
     return ClosesWithRequest(
       request: request,
       child: Dialog(
-        backgroundColor: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+        backgroundColor: c.dialogSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
@@ -63,7 +64,7 @@ class TVAcceptDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: Colors.blue, size: 40),
+                Icon(icon, color: c.info, size: 40),
                 const SizedBox(height: 12),
                 Text(title,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -76,13 +77,13 @@ class TVAcceptDialog extends StatelessWidget {
                   Directionality(
                     textDirection: TextDirection.ltr,
                     child: Text(request.device.ip,
-                        style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                        style: TextStyle(fontSize: 13, color: c.caption)),
                   ),
                 // Owner decision: whoever accepts sees it; accepting is enough.
                 if (request.keyChanged) ...[
                   const SizedBox(height: 8),
                   Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.warning_amber_rounded, size: 20, color: Colors.orange),
+                    Icon(Icons.warning_amber_rounded, size: 20, color: c.warning),
                     const SizedBox(width: 6),
                     Flexible(
                         child: Text(l10n.requestNewKey,
@@ -102,15 +103,15 @@ class TVAcceptDialog extends StatelessWidget {
                       style: const TextStyle(fontSize: 14)),
                 if (request.fileSize > 0)
                   Text(FileUiUtils.formatFileSize(request.fileSize),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, color: Colors.blue, fontSize: 13)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: c.info, fontSize: 13)),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                       child: TVDialogButton(
                         label: l10n.reject,
-                        color: Colors.red,
+                        color: c.critical,
                         autofocus: true,
                         onTap: () => Navigator.pop(context, false),
                       ),
@@ -119,7 +120,7 @@ class TVAcceptDialog extends StatelessWidget {
                     Expanded(
                       child: TVDialogButton(
                         label: l10n.accept,
-                        color: Colors.blue,
+                        color: c.info,
                         autofocus: false,
                         onTap: () => Navigator.pop(context, true),
                       ),

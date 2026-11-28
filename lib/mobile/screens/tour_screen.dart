@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../managers/permission_manager.dart';
 import '../../services/settings_service.dart';
+import '../../shared/apex_colors.dart';
 import '../../utils/platform_detector.dart';
 import 'home_screen.dart';
 
@@ -220,9 +221,10 @@ class _TourScreenState extends State<TourScreen> {
   }
 
   Widget _buildBottom(AppLocalizations l10n, bool isDark, bool isWide) {
+    final c = ApexColors.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+      color: c.groupSurface,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -244,13 +246,13 @@ class _TourScreenState extends State<TourScreen> {
                       border: Border.all(
                         color: _agreed
                             ? Theme.of(context).colorScheme.primary
-                            : Colors.grey.withValues(alpha: 0.5),
+                            : c.inactive.withValues(alpha: 0.5),
                         width: 2,
                       ),
                     ),
                     child: _agreed
-                        ? const Icon(Icons.check_rounded,
-                            color: Colors.white, size: 16)
+                        ? Icon(Icons.check_rounded,
+                            color: c.onTint, size: 16)
                         : null,
                   ),
                   const SizedBox(width: 12),
@@ -307,28 +309,29 @@ class _TourScreenState extends State<TourScreen> {
       tourCanStart(asksPermissions: _asksPermissions, agreed: _agreed);
 
   List<_Feature> _features(AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     return [
       _Feature(
         icon: Icons.bolt_rounded,
-        color: const Color(0xFFFF9500),
+        color: c.tintOrange,
         title: l10n.feature1Title,
         desc: l10n.feature1Desc,
       ),
       _Feature(
         icon: Icons.wifi_off_rounded,
-        color: const Color(0xFF34C759),
+        color: c.tintGreen,
         title: l10n.feature2Title,
         desc: l10n.feature2Desc,
       ),
       _Feature(
         icon: Icons.lock_rounded,
-        color: const Color(0xFF5856D6),
+        color: c.accent,
         title: l10n.feature3Title,
         desc: l10n.feature3Desc,
       ),
       _Feature(
         icon: Icons.sensors_rounded,
-        color: const Color(0xFF007AFF),
+        color: c.tintBlue,
         title: l10n.tourDiscoveryTitle,
         desc: l10n.tourDiscoveryDesc,
       ),
@@ -336,13 +339,13 @@ class _TourScreenState extends State<TourScreen> {
       if (_asksPermissions)
         _Feature(
           icon: Icons.phone_android_rounded,
-          color: const Color(0xFFFF2D55),
+          color: c.tintPink,
           title: l10n.tourApkShareTitle,
           desc: l10n.tourApkShareDesc,
         ),
       _Feature(
         icon: Icons.devices_rounded,
-        color: const Color(0xFF32ADE6),
+        color: c.tintCyan,
         title: l10n.tourMultiPlatformTitle,
         desc: l10n.tourMultiPlatformDesc,
       ),
@@ -372,14 +375,15 @@ class _FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+            color: c.shadow.withValues(alpha: isDark ? 0.25 : 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -406,7 +410,7 @@ class _FeatureCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(feature.icon, color: Colors.white, size: 22),
+            child: Icon(feature.icon, color: c.onTint, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(

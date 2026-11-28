@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../managers/permission_manager.dart';
 import '../../services/settings_service.dart';
+import '../../shared/apex_colors.dart';
 import 'tv_home_screen.dart';
 
 class TVTourScreen extends StatefulWidget {
@@ -61,6 +62,7 @@ class _TVTourScreenState extends State<TVTourScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = Theme.of(context).colorScheme.primary;
@@ -149,7 +151,7 @@ class _TVTourScreenState extends State<TVTourScreen> {
                         ]),
                         const SizedBox(height: 24),
                         // Features
-                        ..._features(l10n).map((f) => Padding(
+                        ..._features(l10n, c).map((f) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _TVFeatureCard(feature: f, isDark: isDark),
                             )),
@@ -167,11 +169,11 @@ class _TVTourScreenState extends State<TVTourScreen> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              color: c.groupSurface,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                  color: c.shadow.withValues(alpha: isDark ? 0.3 : 0.08),
                   blurRadius: 16,
                 ),
               ],
@@ -247,7 +249,7 @@ class _TVTourScreenState extends State<TVTourScreen> {
                           border: Border.all(
                             color: hasFocus || _agreed
                                 ? color.withValues(alpha: hasFocus ? 0.7 : 0.3)
-                                : Colors.grey.withValues(alpha: 0.3),
+                                : c.inactive.withValues(alpha: 0.3),
                             width: hasFocus ? 2 : 1,
                           ),
                         ),
@@ -262,13 +264,13 @@ class _TVTourScreenState extends State<TVTourScreen> {
                               border: Border.all(
                                 color: _agreed
                                     ? color
-                                    : Colors.grey.withValues(alpha: 0.5),
+                                    : c.inactive.withValues(alpha: 0.5),
                                 width: 2,
                               ),
                             ),
                             child: _agreed
-                                ? const Icon(Icons.check_rounded,
-                                    color: Colors.white, size: 14)
+                                ? Icon(Icons.check_rounded,
+                                    color: c.onTint, size: 14)
                                 : null,
                           ),
                           const SizedBox(width: 10),
@@ -345,7 +347,7 @@ class _TVTourScreenState extends State<TVTourScreen> {
                                 Icons.rocket_launch_rounded,
                                 size: 18,
                                 color:
-                                    hasFocus && _agreed ? Colors.white : color,
+                                    hasFocus && _agreed ? c.onTint : color,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -354,7 +356,7 @@ class _TVTourScreenState extends State<TVTourScreen> {
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: hasFocus && _agreed
-                                      ? Colors.white
+                                      ? c.onTint
                                       : color,
                                 ),
                               ),
@@ -373,26 +375,26 @@ class _TVTourScreenState extends State<TVTourScreen> {
     );
   }
 
-  List<_Feature> _features(AppLocalizations l10n) => [
-        _Feature(Icons.bolt_rounded, const Color(0xFFFF9500),
+  List<_Feature> _features(AppLocalizations l10n, ApexColors c) => [
+        _Feature(Icons.bolt_rounded, c.tintOrange,
             l10n.feature1Title, l10n.feature1Desc),
-        _Feature(Icons.wifi_off_rounded, const Color(0xFF34C759),
+        _Feature(Icons.wifi_off_rounded, c.tintGreen,
             l10n.feature2Title, l10n.feature2Desc),
-        _Feature(Icons.lock_rounded, const Color(0xFF5856D6),
+        _Feature(Icons.lock_rounded, c.accent,
             l10n.feature3Title, l10n.feature3Desc),
         _Feature(
             Icons.sensors_rounded,
-            const Color(0xFF007AFF),
+            c.tintBlue,
             l10n.tourDiscoveryTitle,
             l10n.tourDiscoveryDesc),
         _Feature(
             Icons.phone_android_rounded,
-            const Color(0xFFFF2D55),
+            c.tintPink,
             l10n.tourApkShareTitle,
             l10n.tourApkShareDesc),
         _Feature(
             Icons.devices_rounded,
-            const Color(0xFF32ADE6),
+            c.tintCyan,
             l10n.tourMultiPlatformTitle,
             l10n.tourMultiPlatformDesc),
       ];
@@ -415,14 +417,15 @@ class _TVFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            color: c.shadow.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -440,7 +443,7 @@ class _TVFeatureCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(feature.icon, color: Colors.white, size: 20),
+          child: Icon(feature.icon, color: c.onTint, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(

@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/apex_apps_loader.dart';
+import '../../shared/apex_colors.dart';
 import '../../shared/apex_header.dart';
 import '../../shared/apex_icons.dart';
 import '../../utils/apex_logger.dart';
@@ -55,6 +56,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = Theme.of(context).colorScheme.primary;
     final l10n = AppLocalizations.of(context);
@@ -67,11 +69,11 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
         margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[900] : Colors.white,
+          color: c.sheetSurface,
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+              color: c.shadow.withValues(alpha: isDark ? 0.5 : 0.15),
               blurRadius: 32,
               offset: const Offset(0, -4),
             ),
@@ -92,7 +94,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                     tooltip: l10n.close,
                     icon: Icon(
                       Icons.close_rounded,
-                      color: isDark ? Colors.white54 : Colors.black45,
+                      color: c.inkSoft,
                     ),
                   ),
                 ],
@@ -109,22 +111,22 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.grey.withValues(alpha: 0.08),
+                      ? c.veil.withValues(alpha: 0.05)
+                      : c.inactive.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
                     Icon(Icons.settings_applications_rounded,
                         size: 18,
-                        color: isDark ? Colors.white60 : Colors.black54),
+                        color: c.inkMid),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         l10n.systemApps,
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDark ? Colors.white70 : Colors.black87,
+                          color: c.inkBody,
                         ),
                       ),
                     ),
@@ -164,7 +166,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.error, size: 48, color: Colors.red),
+                          Icon(Icons.error, size: 48, color: c.critical),
                           const SizedBox(height: 12),
                           Text('${l10n.connectionError}: ${snapshot.error}',
                               textAlign: TextAlign.center),
@@ -185,7 +187,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.apps, size: 48, color: Colors.grey),
+                          Icon(Icons.apps, size: 48, color: c.inactive),
                           const SizedBox(height: 12),
                           Text(l10n.noApps,
                               style: const TextStyle(fontSize: 16)),
@@ -202,7 +204,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                       child: Text(
                         l10n.appsNoUserApps,
                         style:
-                            const TextStyle(fontSize: 14, color: Colors.grey),
+                            TextStyle(fontSize: 14, color: c.inactive),
                       ),
                     );
                   }
@@ -259,7 +261,7 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
                         .sendAppsCount(_selectedPackages.length)),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: const Color(0xFF34C759),
+                      backgroundColor: c.tintGreen,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -318,6 +320,7 @@ class _AppTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -347,13 +350,13 @@ class _AppTile extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? color
-                      : (isDark ? Colors.white30 : Colors.black26),
+                      : c.inkEdge,
                   width: 1.5,
                 ),
               ),
               child: isSelected
-                  ? const Icon(Icons.check_rounded,
-                      size: 14, color: Colors.white)
+                  ? Icon(Icons.check_rounded,
+                      size: 14, color: c.onTint)
                   : null,
             ),
             const SizedBox(width: 12),
@@ -365,7 +368,7 @@ class _AppTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.android, size: 40, color: Colors.grey),
+                    Icon(Icons.android, size: 40, color: c.inactive),
               ),
             ),
             const SizedBox(width: 12),
@@ -386,7 +389,7 @@ class _AppTile extends StatelessWidget {
                     '$sizeMB MB',
                     style: TextStyle(
                       fontSize: 11,
-                      color: isDark ? Colors.white54 : Colors.black45,
+                      color: c.inkSoft,
                     ),
                   ),
                 ],
@@ -397,15 +400,15 @@ class _AppTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.12),
+                  color: c.warning.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
+                child: Text(
                   'SYS',
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: c.warning,
                   ),
                 ),
               ),

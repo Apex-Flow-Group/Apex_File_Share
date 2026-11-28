@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/apex_core.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/settings_service.dart';
+import '../../shared/apex_colors.dart';
 import '../../shared/apex_header.dart';
 import '../../shared/apex_icons.dart';
 import '../../utils/platform_detector.dart';
@@ -42,6 +43,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, AppLocalizations l10n) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
@@ -54,11 +56,11 @@ class SettingsScreen extends StatelessWidget {
         _buildGroup(context, isDark, [
           _SettingsTile(
             icon: Icons.badge_rounded,
-            iconColor: const Color(0xFF007AFF),
+            iconColor: c.tintBlue,
             title: l10n.deviceName,
             subtitle: ApexCore.instance.localDevice?.name ?? '—',
             trailing:
-                const Icon(Icons.edit_rounded, size: 16, color: Colors.grey),
+                Icon(Icons.edit_rounded, size: 16, color: c.inactive),
             onTap: () => SettingsSheets.showRenameDialog(context, l10n),
           ),
         ]),
@@ -73,7 +75,7 @@ class SettingsScreen extends StatelessWidget {
             builder: (context, _) => _buildGroup(context, isDark, [
               _SettingsTile(
                 icon: ApexIcons.paste,
-                iconColor: const Color(0xFFFF9500),
+                iconColor: c.tintOrange,
                 title: l10n.watchClipboard,
                 subtitle: l10n.watchClipboardDesc,
                 trailing: Switch(
@@ -92,7 +94,7 @@ class SettingsScreen extends StatelessWidget {
         _buildGroup(context, isDark, [
           _SettingsTile(
             icon: Icons.language_rounded,
-            iconColor: const Color(0xFF007AFF),
+            iconColor: c.tintBlue,
             title: l10n.language,
             subtitle: _getLanguageName(settings.locale?.languageCode, context),
             onTap: () =>
@@ -100,7 +102,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           _SettingsTile(
             icon: Icons.contrast_rounded,
-            iconColor: const Color(0xFF5856D6),
+            iconColor: c.accent,
             title: l10n.theme,
             subtitle: _getThemeName(settings.themeMode, context),
             onTap: () => SettingsSheets.showThemeSheet(context, l10n, settings),
@@ -113,18 +115,18 @@ class SettingsScreen extends StatelessWidget {
           _buildGroup(context, isDark, [
             _SettingsTile(
               icon: Icons.security_rounded,
-              iconColor: const Color(0xFF34C759),
+              iconColor: c.tintGreen,
               title: l10n.appPermissions,
               subtitle: l10n.managePermissions,
               onTap: () => SettingsSheets.showPermissionsSheet(context, l10n),
             ),
             _SettingsTile(
               icon: ApexIcons.settings,
-              iconColor: const Color(0xFF8E8E93),
+              iconColor: c.tintGrey,
               title: l10n.systemSettings,
               subtitle: l10n.openSystemSettings,
-              trailing: const Icon(Icons.open_in_new_rounded,
-                  size: 16, color: Colors.grey),
+              trailing: Icon(Icons.open_in_new_rounded,
+                  size: 16, color: c.inactive),
               onTap: () => openAppSettings(),
             ),
           ]),
@@ -135,13 +137,13 @@ class SettingsScreen extends StatelessWidget {
         _buildGroup(context, isDark, [
           _SettingsTile(
             icon: Icons.sensors_rounded,
-            iconColor: const Color(0xFFFF9500),
+            iconColor: c.tintOrange,
             title: l10n.wifiDirect,
             subtitle: l10n.wifiDirectDesc,
           ),
           _SettingsTile(
             icon: Icons.router_rounded,
-            iconColor: const Color(0xFF32ADE6),
+            iconColor: c.tintCyan,
             title: l10n.localNetwork,
             subtitle: l10n.localNetworkDesc,
           ),
@@ -153,7 +155,7 @@ class SettingsScreen extends StatelessWidget {
           _buildGroup(context, isDark, [
             _SettingsTile(
               icon: Icons.slideshow_rounded,
-              iconColor: const Color(0xFFFF3B30),
+              iconColor: c.tintRed,
               title: 'Onboarding Screen',
               subtitle: 'Preview the intro tour',
               onTap: () => Navigator.of(context).push(
@@ -164,7 +166,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             _SettingsTile(
               icon: Icons.system_update_rounded,
-              iconColor: const Color(0xFFFF9500),
+              iconColor: c.tintOrange,
               title: 'Update Sheet',
               subtitle: 'Preview update available dialog',
               onTap: onDebugUpdateTap,
@@ -191,14 +193,15 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildGroup(
       BuildContext context, bool isDark, List<_SettingsTile> tiles) {
+    final c = ApexColors.of(context);
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: c.cardSurface,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+            color: c.shadow.withValues(alpha: isDark ? 0.25 : 0.06),
             blurRadius: 12,
             offset: const Offset(0, 3),
           ),
@@ -217,9 +220,7 @@ class SettingsScreen extends StatelessWidget {
                   height: 1,
                   indent: 56,
                   endIndent: 0,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.06)
-                      : Colors.black.withValues(alpha: 0.06),
+                  color: c.veil.withValues(alpha: 0.06),
                 ),
               _buildTile(context, tile, i == 0, i == tiles.length - 1),
             ],
@@ -359,19 +360,20 @@ class _ShareSettingsSection extends StatefulWidget {
 class _ShareSettingsSectionState extends State<_ShareSettingsSection> {
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFF5856D6);
+    final color = c.accent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+          color: c.groupSurface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+              color: c.shadow.withValues(alpha: isDark ? 0.2 : 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -401,13 +403,13 @@ class _ShareSettingsSectionState extends State<_ShareSettingsSection> {
                 height: 1,
                 indent: 16,
                 endIndent: 16,
-                color: (isDark ? Colors.white : Colors.black)
+                color: c.veil
                     .withValues(alpha: 0.08),
               ),
               // Allow uploads
               _ToggleTile(
                 icon: Icons.upload_rounded,
-                iconColor: const Color(0xFF34C759),
+                iconColor: c.tintGreen,
                 title: l10n.allowShareUploads,
                 subtitle: l10n.allowShareUploadsDesc,
                 value: widget.settings.allowShareUploads,

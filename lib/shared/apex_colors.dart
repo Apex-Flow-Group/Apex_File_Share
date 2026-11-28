@@ -3,8 +3,12 @@ import 'package:material_ui/material_ui.dart';
 /// The app's colour roles, one place for every bar, panel and card (owner
 /// decision): the warm greys measured from the owner's references, dark from
 /// them and light by the same steps, not approved on a device yet. What is
-/// selected is a surface a step lighter, not a colour; [accent] is for the TV
-/// focus ring and the unread count only.
+/// selected is a surface a step lighter, not a colour; [accent] is the
+/// system's accent: the TV focus ring, the unread count and a share's, a
+/// desktop's and a video's own colour.
+///
+/// No screen writes a colour by hand (test/guards/no_hand_colours_test.dart):
+/// the roles after [online] are fixed, the same in every system's colours.
 @immutable
 class ApexColors extends ThemeExtension<ApexColors> {
   const ApexColors({
@@ -27,6 +31,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
     required this.accent,
     required this.danger,
     required this.online,
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.critical,
+    required this.tintBlue,
+    required this.tintGreen,
+    required this.tintOrange,
+    required this.tintRed,
+    required this.tintPink,
+    required this.tintCyan,
+    required this.tintTeal,
+    required this.tintGrey,
+    required this.inactive,
+    required this.caption,
+    required this.captionStrong,
+    required this.onTint,
+    required this.paper,
+    required this.shadow,
+    required this.veil,
+    required this.cardSurface,
+    required this.groupSurface,
+    required this.dialogSurface,
+    required this.sheetSurface,
+    required this.screenBackdrop,
+    required this.browserBackdrop,
+    required this.bubble,
+    required this.splashBackground,
+    required this.splashText,
+    required this.titleInk,
+    required this.heading,
+    required this.inkSoft,
+    required this.inkMid,
+    required this.inkBody,
+    required this.inkIcon,
+    required this.inkFaint,
+    required this.inkEdge,
+    required this.brand,
+    required this.brandSoft,
+    required this.brandPale,
+    required this.brandDeep,
+    required this.introNight,
+    required this.introNightLift,
   });
 
   /// Behind everything.
@@ -74,6 +120,88 @@ class ApexColors extends ThemeExtension<ApexColors> {
   /// The dot before a device that can be reached.
   final Color online;
 
+  // Status, the same in dark and light.
+  /// A good result: saved, up to date, received.
+  final Color success;
+  /// Caution: a note that needs a look.
+  final Color warning;
+  /// A notice or a link.
+  final Color info;
+  /// A failure or a delete, as a fill or an icon.
+  final Color critical;
+
+  // A tile with a hue of its own (a file's type, a device's type, a settings or tour tile): the same in dark and light.
+  final Color tintBlue;
+  final Color tintGreen;
+  final Color tintOrange;
+  final Color tintRed;
+  final Color tintPink;
+  final Color tintCyan;
+  final Color tintTeal;
+  final Color tintGrey;
+
+  // Greys and what sits on a coloured fill, the same in dark and light.
+  /// Hints, empty-state icons and what is switched off.
+  final Color inactive;
+  /// A line under a title.
+  final Color caption;
+  /// A caption a step darker: the source link.
+  final Color captionStrong;
+  /// Text and icons on a coloured fill.
+  final Color onTint;
+  /// What a QR code is printed on: white in both, or it does not scan.
+  final Color paper;
+  /// Black for shadows and scrims, with its own alpha.
+  final Color shadow;
+  /// A wash over a surface, with its own alpha: white in dark, black in light.
+  final Color veil;
+
+  // Surfaces of the screens that had them by hand: dark and light differ.
+  /// A card in a tab and in settings.
+  final Color cardSurface;
+  /// A group of rows in settings and the tour.
+  final Color groupSurface;
+  /// A TV dialog and the transfer card.
+  final Color dialogSurface;
+  /// A bottom sheet.
+  final Color sheetSurface;
+  /// Behind the TV's pickers and its details panel.
+  final Color screenBackdrop;
+  /// Behind the shared folder's browser.
+  final Color browserBackdrop;
+  /// A chat bubble.
+  final Color bubble;
+  /// Behind the splash.
+  final Color splashBackground;
+  /// The splash's name.
+  final Color splashText;
+  /// A transfer's or clipboard item's name.
+  final Color titleInk;
+  /// A panel's title.
+  final Color heading;
+
+  // Text and icons on those surfaces, from the faintest to the strongest.
+  /// Close icons and second lines.
+  final Color inkSoft;
+  /// A row's icon.
+  final Color inkMid;
+  /// A row's text.
+  final Color inkBody;
+  /// A back icon.
+  final Color inkIcon;
+  /// The faintest line and icon.
+  final Color inkFaint;
+  /// An unticked box's edge.
+  final Color inkEdge;
+
+  // The splash and the intro's own look, the same in dark and light.
+  final Color brand;
+  final Color brandSoft;
+  final Color brandPale;
+  final Color brandDeep;
+  final Color introNight;
+  final Color introNightLift;
+
   static const dark = ApexColors(
     window: Color(0xFF151515),
     panel: Color(0xFF1C1C1C),
@@ -96,6 +224,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
     accent: Color(0xFFD0BCFF),
     danger: Color(0xFFF2B8B5),
     online: Color(0xFF4CAF50),
+    success: Color(0xFF4CAF50),
+    warning: Color(0xFFFF9800),
+    info: Color(0xFF2196F3),
+    critical: Color(0xFFF44336),
+    tintBlue: Color(0xFF007AFF),
+    tintGreen: Color(0xFF34C759),
+    tintOrange: Color(0xFFFF9500),
+    tintRed: Color(0xFFFF3B30),
+    tintPink: Color(0xFFFF2D55),
+    tintCyan: Color(0xFF32ADE6),
+    tintTeal: Color(0xFF30B0C7),
+    tintGrey: Color(0xFF8E8E93),
+    inactive: Color(0xFF9E9E9E),
+    caption: Color(0xFF757575),
+    captionStrong: Color(0xFF616161),
+    onTint: Color(0xFFFFFFFF),
+    paper: Color(0xFFFFFFFF),
+    shadow: Color(0xFF000000),
+    veil: Color(0xFFFFFFFF),
+    cardSurface: Color(0xFF1E1E1E),
+    groupSurface: Color(0xFF1C1C1E),
+    dialogSurface: Color(0xFF2C2C2E),
+    sheetSurface: Color(0xFF212121),
+    screenBackdrop: Color(0xFF1C1C1E),
+    browserBackdrop: Color(0xFF1C1C1E),
+    bubble: Color(0xFF2C2C2E),
+    splashBackground: Color(0xFF0D0D0F),
+    splashText: Color(0xFFFFFFFF),
+    titleInk: Color(0xFFFFFFFF),
+    heading: Color(0xFFFFFFFF),
+    inkSoft: Color(0x8AFFFFFF),
+    inkMid: Color(0x99FFFFFF),
+    inkBody: Color(0xB3FFFFFF),
+    inkIcon: Color(0xB3FFFFFF),
+    inkFaint: Color(0x62FFFFFF),
+    inkEdge: Color(0x4DFFFFFF),
+    brand: Color(0xFF6750A4),
+    brandSoft: Color(0xFF9575CD),
+    brandPale: Color(0xFFE1BEE7),
+    brandDeep: Color(0xFF7E57C2),
+    introNight: Color(0xFF1A237E),
+    introNightLift: Color(0xFF283593),
   );
 
   static const light = ApexColors(
@@ -118,6 +288,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
     accent: Color(0xFF6750A4),
     danger: Color(0xFFB3261E),
     online: Color(0xFF2E7D32),
+    success: Color(0xFF4CAF50),
+    warning: Color(0xFFFF9800),
+    info: Color(0xFF2196F3),
+    critical: Color(0xFFF44336),
+    tintBlue: Color(0xFF007AFF),
+    tintGreen: Color(0xFF34C759),
+    tintOrange: Color(0xFFFF9500),
+    tintRed: Color(0xFFFF3B30),
+    tintPink: Color(0xFFFF2D55),
+    tintCyan: Color(0xFF32ADE6),
+    tintTeal: Color(0xFF30B0C7),
+    tintGrey: Color(0xFF8E8E93),
+    inactive: Color(0xFF9E9E9E),
+    caption: Color(0xFF757575),
+    captionStrong: Color(0xFF616161),
+    onTint: Color(0xFFFFFFFF),
+    paper: Color(0xFFFFFFFF),
+    shadow: Color(0xFF000000),
+    veil: Color(0xFF000000),
+    cardSurface: Color(0xFFFFFFFF),
+    groupSurface: Color(0xFFFFFFFF),
+    dialogSurface: Color(0xFFFFFFFF),
+    sheetSurface: Color(0xFFFFFFFF),
+    screenBackdrop: Color(0xFFF5F5F7),
+    browserBackdrop: Color(0xFFF2F2F7),
+    bubble: Color(0xFFF0F0F2),
+    splashBackground: Color(0xFFF5F3FF),
+    splashText: Color(0xFF1C1B1F),
+    titleInk: Color(0xFF1C1C1E),
+    heading: Color(0xFF000000),
+    inkSoft: Color(0x73000000),
+    inkMid: Color(0x8A000000),
+    inkBody: Color(0xDD000000),
+    inkIcon: Color(0x8A000000),
+    inkFaint: Color(0x61000000),
+    inkEdge: Color(0x42000000),
+    brand: Color(0xFF6750A4),
+    brandSoft: Color(0xFF9575CD),
+    brandPale: Color(0xFFE1BEE7),
+    brandDeep: Color(0xFF7E57C2),
+    introNight: Color(0xFF1A237E),
+    introNightLift: Color(0xFF283593),
   );
 
   /// The app's roles made from the system's colours, by their GTK names
@@ -138,6 +350,7 @@ class ApexColors extends ThemeExtension<ApexColors> {
     final border = s['borders'] ?? Color.lerp(window, fg, 0.2)!;
     Color mix(Color a, Color b, double t) => Color.lerp(a.withAlpha(255), b.withAlpha(255), t)!;
     final floating = mix(window, fg, 0.05);
+    final base = view.computeLuminance() < 0.5 ? dark : light;
     return ApexColors(
       window: view.withAlpha(255),
       panel: window.withAlpha(255),
@@ -158,6 +371,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
       accent: selection.withAlpha(255),
       danger: (s['error_color'] ?? (view.computeLuminance() < 0.5 ? dark : light).danger).withAlpha(255),
       online: (s['success_color'] ?? (view.computeLuminance() < 0.5 ? dark : light).online).withAlpha(255),
+      success: base.success,
+      warning: base.warning,
+      info: base.info,
+      critical: base.critical,
+      tintBlue: base.tintBlue,
+      tintGreen: base.tintGreen,
+      tintOrange: base.tintOrange,
+      tintRed: base.tintRed,
+      tintPink: base.tintPink,
+      tintCyan: base.tintCyan,
+      tintTeal: base.tintTeal,
+      tintGrey: base.tintGrey,
+      inactive: base.inactive,
+      caption: base.caption,
+      captionStrong: base.captionStrong,
+      onTint: base.onTint,
+      paper: base.paper,
+      shadow: base.shadow,
+      veil: base.veil,
+      cardSurface: base.cardSurface,
+      groupSurface: base.groupSurface,
+      dialogSurface: base.dialogSurface,
+      sheetSurface: base.sheetSurface,
+      screenBackdrop: base.screenBackdrop,
+      browserBackdrop: base.browserBackdrop,
+      bubble: base.bubble,
+      splashBackground: base.splashBackground,
+      splashText: base.splashText,
+      titleInk: base.titleInk,
+      heading: base.heading,
+      inkSoft: base.inkSoft,
+      inkMid: base.inkMid,
+      inkBody: base.inkBody,
+      inkIcon: base.inkIcon,
+      inkFaint: base.inkFaint,
+      inkEdge: base.inkEdge,
+      brand: base.brand,
+      brandSoft: base.brandSoft,
+      brandPale: base.brandPale,
+      brandDeep: base.brandDeep,
+      introNight: base.introNight,
+      introNightLift: base.introNightLift,
     );
   }
 
@@ -186,6 +441,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
       accent: a,
       danger: danger,
       online: online,
+      success: success,
+      warning: warning,
+      info: info,
+      critical: critical,
+      tintBlue: tintBlue,
+      tintGreen: tintGreen,
+      tintOrange: tintOrange,
+      tintRed: tintRed,
+      tintPink: tintPink,
+      tintCyan: tintCyan,
+      tintTeal: tintTeal,
+      tintGrey: tintGrey,
+      inactive: inactive,
+      caption: caption,
+      captionStrong: captionStrong,
+      onTint: onTint,
+      paper: paper,
+      shadow: shadow,
+      veil: veil,
+      cardSurface: cardSurface,
+      groupSurface: groupSurface,
+      dialogSurface: dialogSurface,
+      sheetSurface: sheetSurface,
+      screenBackdrop: screenBackdrop,
+      browserBackdrop: browserBackdrop,
+      bubble: bubble,
+      splashBackground: splashBackground,
+      splashText: splashText,
+      titleInk: titleInk,
+      heading: heading,
+      inkSoft: inkSoft,
+      inkMid: inkMid,
+      inkBody: inkBody,
+      inkIcon: inkIcon,
+      inkFaint: inkFaint,
+      inkEdge: inkEdge,
+      brand: brand,
+      brandSoft: brandSoft,
+      brandPale: brandPale,
+      brandDeep: brandDeep,
+      introNight: introNight,
+      introNightLift: introNightLift,
     );
   }
 
@@ -230,6 +527,48 @@ class ApexColors extends ThemeExtension<ApexColors> {
       accent: l(accent, other.accent),
       danger: l(danger, other.danger),
       online: l(online, other.online),
+      success: l(success, other.success),
+      warning: l(warning, other.warning),
+      info: l(info, other.info),
+      critical: l(critical, other.critical),
+      tintBlue: l(tintBlue, other.tintBlue),
+      tintGreen: l(tintGreen, other.tintGreen),
+      tintOrange: l(tintOrange, other.tintOrange),
+      tintRed: l(tintRed, other.tintRed),
+      tintPink: l(tintPink, other.tintPink),
+      tintCyan: l(tintCyan, other.tintCyan),
+      tintTeal: l(tintTeal, other.tintTeal),
+      tintGrey: l(tintGrey, other.tintGrey),
+      inactive: l(inactive, other.inactive),
+      caption: l(caption, other.caption),
+      captionStrong: l(captionStrong, other.captionStrong),
+      onTint: l(onTint, other.onTint),
+      paper: l(paper, other.paper),
+      shadow: l(shadow, other.shadow),
+      veil: l(veil, other.veil),
+      cardSurface: l(cardSurface, other.cardSurface),
+      groupSurface: l(groupSurface, other.groupSurface),
+      dialogSurface: l(dialogSurface, other.dialogSurface),
+      sheetSurface: l(sheetSurface, other.sheetSurface),
+      screenBackdrop: l(screenBackdrop, other.screenBackdrop),
+      browserBackdrop: l(browserBackdrop, other.browserBackdrop),
+      bubble: l(bubble, other.bubble),
+      splashBackground: l(splashBackground, other.splashBackground),
+      splashText: l(splashText, other.splashText),
+      titleInk: l(titleInk, other.titleInk),
+      heading: l(heading, other.heading),
+      inkSoft: l(inkSoft, other.inkSoft),
+      inkMid: l(inkMid, other.inkMid),
+      inkBody: l(inkBody, other.inkBody),
+      inkIcon: l(inkIcon, other.inkIcon),
+      inkFaint: l(inkFaint, other.inkFaint),
+      inkEdge: l(inkEdge, other.inkEdge),
+      brand: l(brand, other.brand),
+      brandSoft: l(brandSoft, other.brandSoft),
+      brandPale: l(brandPale, other.brandPale),
+      brandDeep: l(brandDeep, other.brandDeep),
+      introNight: l(introNight, other.introNight),
+      introNightLift: l(introNightLift, other.introNightLift),
     );
   }
 }

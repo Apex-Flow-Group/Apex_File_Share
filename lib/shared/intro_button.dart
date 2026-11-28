@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'apex_colors.dart';
+
 /// Animated button with border-draw + fill + pulse effects for intro/onboarding.
 class IntroButton extends StatefulWidget {
   final String text;
@@ -56,6 +58,7 @@ class _IntroButtonState extends State<IntroButton>
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     return GestureDetector(
       onTap: widget.textOpacity > 0.5 ? _handleTap : null,
       child: AnimatedBuilder(
@@ -68,6 +71,7 @@ class _IntroButtonState extends State<IntroButton>
                 drawProgress: widget.drawProgress,
                 fillProgress: widget.fillProgress,
                 pulseProgress: _pulseController.value,
+                c: c,
               ),
               child: Container(
                 width: widget.width,
@@ -78,7 +82,7 @@ class _IntroButtonState extends State<IntroButton>
                   child: Text(
                     widget.text,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: c.onTint,
                       fontSize: widget.width > 300 ? 20 : 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
@@ -98,11 +102,13 @@ class _ButtonPainter extends CustomPainter {
   final double drawProgress;
   final double fillProgress;
   final double pulseProgress;
+  final ApexColors c;
 
   _ButtonPainter({
     required this.drawProgress,
     required this.fillProgress,
     required this.pulseProgress,
+    required this.c,
   });
 
   @override
@@ -114,7 +120,7 @@ class _ButtonPainter extends CustomPainter {
 
     if (fillProgress > 0) {
       final fillPaint = Paint()
-        ..color = const Color(0xFF6750A4).withValues(alpha: 0.3 * fillProgress)
+        ..color = c.brand.withValues(alpha: 0.3 * fillProgress)
         ..style = PaintingStyle.fill;
       canvas.drawRRect(rect, fillPaint);
     }
@@ -130,7 +136,7 @@ class _ButtonPainter extends CustomPainter {
       final extractPath = pathMetrics.extractPath(0, currentLength);
 
       final borderPaint = Paint()
-        ..color = const Color(0xFF9575CD)
+        ..color = c.brandSoft
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2;
       canvas.drawPath(extractPath, borderPaint);
@@ -139,7 +145,7 @@ class _ButtonPainter extends CustomPainter {
     if (pulseProgress > 0) {
       final pulsePaint = Paint()
         ..color =
-            const Color(0xFF9575CD).withValues(alpha: 0.3 * (1 - pulseProgress))
+            c.brandSoft.withValues(alpha: 0.3 * (1 - pulseProgress))
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4 + pulseProgress * 8;
       canvas.drawRRect(rect, pulsePaint);

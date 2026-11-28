@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'apex_colors.dart';
 import 'apex_header.dart';
 
 /// Bottom sheet موحد بتصميم Apex — يُستخدم بدلاً من تكرار نفس الهيكل
@@ -60,6 +61,7 @@ class ApexBottomSheet extends StatelessWidget {
       isScrollControlled: true,
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final c = ApexColors.of(ctx);
         return SafeArea(
           top: false,
           child: Container(
@@ -69,11 +71,11 @@ class ApexBottomSheet extends StatelessWidget {
             margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey[900] : Colors.white,
+              color: c.sheetSurface,
               borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+                  color: c.shadow.withValues(alpha: isDark ? 0.5 : 0.15),
                   blurRadius: 32,
                   offset: const Offset(0, -4),
                 ),
@@ -132,6 +134,7 @@ class ApexBottomSheet extends StatelessWidget {
     required Function(dynamic) onSelected,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final c = ApexColors.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -141,11 +144,11 @@ class ApexBottomSheet extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           decoration: BoxDecoration(
-            color: isDark ? Colors.grey[900] : Colors.white,
+            color: c.sheetSurface,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+                color: c.shadow.withValues(alpha: isDark ? 0.5 : 0.15),
                 blurRadius: 32,
                 offset: const Offset(0, -4),
               ),
@@ -175,14 +178,14 @@ class ApexBottomSheet extends StatelessWidget {
                               .colorScheme
                               .primary
                               .withValues(alpha: 0.15)
-                          : Colors.grey.withValues(alpha: 0.1),
+                          : c.inactive.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(item.icon,
                         size: 18,
                         color: isSelected
                             ? Theme.of(context).colorScheme.primary
-                            : Colors.grey),
+                            : c.inactive),
                   ),
                   title: Text(item.label,
                       style: TextStyle(
@@ -211,16 +214,17 @@ class ApexBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sheet = Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: c.sheetSurface,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+            color: c.shadow.withValues(alpha: isDark ? 0.5 : 0.15),
             blurRadius: 32,
             offset: const Offset(0, -4),
           ),

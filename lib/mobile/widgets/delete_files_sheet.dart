@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../shared/apex_bottom_sheet.dart';
+import '../../shared/apex_colors.dart';
 
 /// Bottom sheet for confirming file deletion.
 class DeleteFilesSheet {
@@ -15,6 +16,7 @@ class DeleteFilesSheet {
     required int fileCount,
   }) async {
     final l10n = AppLocalizations.of(context);
+    final c = ApexColors.of(context);
 
     final ok = await ApexBottomSheet.showStyled<bool>(
       context,
@@ -27,9 +29,9 @@ class DeleteFilesSheet {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.06),
+                color: c.critical.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                border: Border.all(color: c.critical.withValues(alpha: 0.2)),
               ),
               child: Text(
                 l10n.deleteFilesConfirm(fileCount),
@@ -58,7 +60,7 @@ class DeleteFilesSheet {
             icon: const Icon(Icons.delete_rounded, size: 18),
             label: Text(l10n.delete),
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: c.critical,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14)),

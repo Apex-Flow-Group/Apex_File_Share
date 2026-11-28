@@ -348,7 +348,7 @@ class _DeviceCardState extends State<DeviceCard>
                   style: TextStyle(fontSize: 12, color: c.muted)),
           ]);
         }
-        final color = deviceColor(device);
+        final color = deviceColor(device, c);
         final row = Row(children: [
           CircleAvatar(
             radius: 24,

@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../features/receive/data/sender_log.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../shared/apex_colors.dart';
 import '../../../shared/file_ui_utils.dart';
 import '../../../shared/sender_line_text.dart';
 import '../../../utils/path_name.dart';
@@ -37,8 +38,9 @@ class FileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ApexColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = FileUiUtils.fileColor(name);
+    final iconColor = FileUiUtils.fileColor(name, c);
     final l10n = AppLocalizations.of(context);
 
     return GestureDetector(
@@ -50,9 +52,7 @@ class FileTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primaryContainer
-              : isDark
-                  ? const Color(0xFF1E1E1E)
-                  : Colors.white,
+              : c.cardSurface,
           borderRadius: BorderRadius.circular(18),
           border: isSelected
               ? Border.all(
@@ -62,7 +62,7 @@ class FileTile extends StatelessWidget {
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+                    color: c.shadow.withValues(alpha: isDark ? 0.25 : 0.06),
                     blurRadius: 12,
                     offset: const Offset(0, 3),
                   ),
@@ -96,7 +96,7 @@ class FileTile extends StatelessWidget {
                       ],
                     ),
                     child: Icon(FileUiUtils.fileIcon(name),
-                        color: Colors.white, size: 24),
+                        color: c.onTint, size: 24),
                   ),
             const SizedBox(width: 12),
             Expanded(
