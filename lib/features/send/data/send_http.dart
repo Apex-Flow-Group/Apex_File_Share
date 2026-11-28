@@ -130,6 +130,12 @@ class SendHttp {
     const failed = (outcome: ChatOutcome.failed, token: null);
     final client = _client(target)?..connectionTimeout = const Duration(seconds: 5);
     if (client == null) {
+      ApexLogger.instance.log(
+          'SEND',
+          'Chat not sent: no client for ${target.id} at ${target.ip}:${target.port} '
+              '(own certificate ${getContext() == null ? 'missing' : 'read'}, '
+              'fingerprint ${isFingerprint(target.fingerprint) ? 'valid' : 'invalid "${target.fingerprint}"'})',
+          LogLevel.warning);
       return failed;
     }
     try {
@@ -164,6 +170,7 @@ class SendHttp {
       }
       final json = jsonDecode(reply);
       if (json is! Map) {
+        ApexLogger.instance.log('SEND', 'Chat reply not an object: $reply from ${target.ip}', LogLevel.warning);
         return failed;
       }
       if (json['delivered'] == true) {

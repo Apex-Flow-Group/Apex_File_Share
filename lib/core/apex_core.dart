@@ -402,6 +402,7 @@ class ApexCore {
     }
     // Chat goes over the local network only, not over Nearby.
     if (!target.isMdns) {
+      ApexLogger.instance.log('SEND', 'Chat not sent: ${target.id} is not a network device', LogLevel.warning);
       return (outcome: ChatOutcome.failed, token: null);
     }
     return _send.sendChat(text, target, token);
