@@ -321,6 +321,7 @@ class ApexCore {
     await _discoveryService?.stop();
     _discoveryService = null;
     _discoveredDevices.clear();
+    _heardAt.clear();
     _nearby.connectedEndpoints.clear();
     _devicesController.add([]);
   }
@@ -332,6 +333,7 @@ class ApexCore {
       return;
     }
     _discoveredDevices.clear();
+    _heardAt.clear();
     _nearby.connectedEndpoints.clear();
     _devicesController.add([]);
     final ip = await _getLocalIp();
@@ -511,6 +513,7 @@ class ApexCore {
       _discoveredDevices.removeWhere((_, d) =>
           d.lastSeen != null &&
           now.difference(d.lastSeen!).inSeconds > _deviceTimeout.inSeconds);
+      _heardAt.prune(_deviceTimeout);
       _devicesController.add(devices);
     });
   }

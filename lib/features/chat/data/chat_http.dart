@@ -103,6 +103,10 @@ class ChatHttp {
       return;
     }
     if (expectedFingerprint(id, address) != fingerprint) {
+      ApexLogger.instance.log(
+          'CHAT',
+          'Refused $id from $address: ${expectedFingerprint(id, address) == null ? 'not heard from there' : 'another certificate'}',
+          LogLevel.warning);
       await _reply(req, HttpStatus.forbidden, {'error': ApexProtocol.wrongIdentity});
       return;
     }
