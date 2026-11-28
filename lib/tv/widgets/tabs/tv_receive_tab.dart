@@ -95,11 +95,9 @@ class _TVReceiveTabState extends State<TVReceiveTab>
 
   Widget _buildHeader() {
     final l10n = AppLocalizations.of(context);
-    const color = Color(0xFF5856D6);
 
     return ApexHeader(
       icon: Icons.smartphone_rounded,
-      color: color,
       title: l10n.receive,
     );
   }

@@ -40,11 +40,10 @@ class ApexBottomSheet extends StatelessWidget {
     );
   }
 
-  /// عرض bottom sheet بهيدر ملون + محتوى + أزرار (النمط الأكثر تكراراً)
+  /// عرض bottom sheet بهيدر + محتوى + أزرار (النمط الأكثر تكراراً)
   static Future<T?> showStyled<T>(
     BuildContext context, {
     required IconData headerIcon,
-    required Color headerColor,
     required String headerTitle,
     required Widget content,
     required List<Widget> actions,
@@ -86,7 +85,6 @@ class ApexBottomSheet extends StatelessWidget {
                 ApexSheetTop(
                   header: ApexHeader(
                     icon: headerIcon,
-                    color: headerColor,
                     title: headerTitle,
                     subtitle: headerSubtitle,
                   ),

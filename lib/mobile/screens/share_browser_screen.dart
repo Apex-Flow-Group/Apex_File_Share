@@ -340,7 +340,6 @@ class _ShareBrowserScreenState extends State<ShareBrowserScreen> {
       AppLocalizations l10n, bool isDark, Color color, bool isDesktop) {
     return ApexHeader(
       icon: ApexIcons.sharedFolder,
-      color: color,
       title: l10n.sharedFolder,
       subtitle: widget.device.name,
       detail: '${widget.device.ip}:${widget.device.port}',

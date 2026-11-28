@@ -269,11 +269,8 @@ class _TVSendTabState extends State<TVSendTab> with TickerProviderStateMixin {
   }
 
   Widget _buildHeader(AppLocalizations l10n) {
-    final color = Theme.of(context).colorScheme.primary;
-
     return ApexHeader(
       icon: ApexIcons.sendPage,
-      color: color,
       title: l10n.send,
       subtitle: l10n.availableDeviceCount(widget.devices.length),
     );

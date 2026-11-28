@@ -181,7 +181,6 @@ class _FilesTabState extends State<FilesTab>
 
     return ApexHeader(
       icon: Icons.folder_rounded,
-      color: color,
       title: l10n.files,
       subtitle: _files == null ? '...' : l10n.fileCount(_files!.length),
       trailing: [

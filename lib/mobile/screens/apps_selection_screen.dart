@@ -82,7 +82,6 @@ class _AppsSelectionSheetState extends State<AppsSelectionSheet> {
             ApexSheetTop(
               header: ApexHeader(
                 icon: Icons.android_rounded,
-                color: const Color(0xFF34C759),
                 title: l10n.installedApps,
                 subtitle: _selectedPackages.isNotEmpty
                     ? l10n.selectedCount(_selectedPackages.length)

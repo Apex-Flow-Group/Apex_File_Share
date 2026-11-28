@@ -183,7 +183,6 @@ class SettingsScreen extends StatelessWidget {
   /// with the groups below it (the sheet's 20 and their 16).
   static Widget header(BuildContext context) => ApexHeader(
         icon: ApexIcons.settings,
-        color: const Color(0xFF8E8E93),
         title: AppLocalizations.of(context).settings,
         inset: 36,
       );

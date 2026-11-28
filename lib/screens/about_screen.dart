@@ -24,7 +24,6 @@ class AboutScreen extends StatefulWidget {
   /// The sheet's head, under its handle: [ApexBottomSheet.header].
   static Widget header(BuildContext context) => ApexHeader(
         icon: ApexIcons.about,
-        color: Theme.of(context).colorScheme.primary,
         title: AppLocalizations.of(context).aboutApp,
       );
 

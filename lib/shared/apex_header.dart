@@ -1,13 +1,19 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'apex_colors.dart';
+
 /// The head of every screen and sheet, one look everywhere. It fills the top
 /// of what holds it: behind a phone's status bar, or under a sheet's handle
 /// ([ApexSheetTop]); both reach it as its top padding, so the screen above
 /// it must not take that padding away (no SafeArea top over it).
+///
+/// Plain, as the system's own window bar is (owner decision): it paints
+/// nothing behind itself, so its title sits on the window, or on the sheet
+/// that holds it, and its icon is the text's colour on a neutral step. No
+/// screen gives it a colour of its own.
 class ApexHeader extends StatelessWidget {
   const ApexHeader({
     required this.icon,
-    required this.color,
     required this.title,
     this.subtitle,
     this.detail,
@@ -18,7 +24,6 @@ class ApexHeader extends StatelessWidget {
   });
 
   final IconData icon;
-  final Color color;
   final String title;
   final String? subtitle;
 
@@ -35,32 +40,21 @@ class ApexHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final faint = theme.colorScheme.onSurfaceVariant;
+    final c = ApexColors.of(context);
     final small = theme.textTheme.bodySmall;
-    return Container(
+    return Padding(
       padding: EdgeInsets.fromLTRB(
           inset, MediaQuery.paddingOf(context).top + 16, inset, 20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [color.withValues(alpha: 0.2), color.withValues(alpha: 0.05)]
-              : [color.withValues(alpha: 0.12), color.withValues(alpha: 0.03)],
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
-      ),
       child: Row(
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 12)],
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: c.circle,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 22),
+            child: Icon(icon, color: c.onCircle, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -71,19 +65,18 @@ class ApexHeader extends StatelessWidget {
                 Text(title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold, color: c.text)),
                 if (subtitle != null)
                   Text(subtitle!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: small?.copyWith(color: faint)),
+                      style: small?.copyWith(color: c.muted)),
                 if (detail != null)
                   Text(detail!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: small?.copyWith(
-                          color: faint.withValues(alpha: 0.6), fontSize: 11)),
+                      style: small?.copyWith(color: c.hint, fontSize: 11)),
               ],
             ),
           ),
@@ -94,8 +87,7 @@ class ApexHeader extends StatelessWidget {
   }
 }
 
-/// A sheet's top: its handle, drawn on [header] when there is one. The sheet
-/// clips to its curve (Clip.antiAlias) so the header's corners follow it.
+/// A sheet's top: its handle, drawn on [header] when there is one.
 class ApexSheetTop extends StatelessWidget {
   const ApexSheetTop({this.header, super.key});
 

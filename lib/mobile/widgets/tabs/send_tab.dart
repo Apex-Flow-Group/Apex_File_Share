@@ -390,11 +390,8 @@ class _SendTabState extends State<SendTab> with TickerProviderStateMixin {
   // ─── Header ────────────────────────────────────────────────────────────────
 
   Widget _buildHeader(AppLocalizations l10n) {
-    final color = Theme.of(context).colorScheme.primary;
-
     return ApexHeader(
       icon: ApexIcons.sendPage,
-      color: color,
       title: l10n.send,
       // The search itself is said in the body, which knows whether it runs.
       subtitle: l10n.availableDeviceCount(widget.devices.length),

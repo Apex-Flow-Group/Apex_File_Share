@@ -92,7 +92,6 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
     ApexBottomSheet.showStyled(
       context,
       headerIcon: Icons.check_circle_rounded,
-      headerColor: Colors.green,
       headerTitle: l10n.fileReceived,
       isDismissible: true,
       enableDrag: false,
@@ -166,7 +165,6 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
     ApexBottomSheet.showStyled(
       context,
       headerIcon: Icons.check_circle_rounded,
-      headerColor: Colors.green,
       headerTitle: l10n.filesReceivedTitle(totalFiles),
       isDismissible: true,
       enableDrag: false,
@@ -255,7 +253,6 @@ mixin HomeDialogs<T extends StatefulWidget> on State<T> {
     ApexBottomSheet.showStyled(
       context,
       headerIcon: icon,
-      headerColor: Colors.blue,
       headerTitle: title,
       headerSubtitle: question,
       isDismissible: false,

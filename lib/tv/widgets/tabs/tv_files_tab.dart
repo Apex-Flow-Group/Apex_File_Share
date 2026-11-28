@@ -82,7 +82,6 @@ class _TVFilesTabState extends State<TVFilesTab> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const color = Color(0xFFFF9500);
 
     return SafeArea(
       bottom: false,
@@ -90,7 +89,6 @@ class _TVFilesTabState extends State<TVFilesTab> {
         // ─── Header ──────────────────────────────────────────────────
         ApexHeader(
           icon: Icons.folder_rounded,
-          color: color,
           title: l10n.files,
           subtitle: _files == null ? '...' : l10n.fileCount(_files!.length),
           trailing: [_TVFocusableRefreshButton(onTap: _load)],

@@ -19,7 +19,6 @@ class DeleteFilesSheet {
     final ok = await ApexBottomSheet.showStyled<bool>(
       context,
       headerIcon: Icons.delete_rounded,
-      headerColor: Colors.red,
       headerTitle: l10n.deleteFiles,
       content: Column(
           mainAxisSize: MainAxisSize.min,
