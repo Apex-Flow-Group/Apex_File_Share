@@ -120,6 +120,51 @@ class ApexColors extends ThemeExtension<ApexColors> {
     online: Color(0xFF2E7D32),
   );
 
+  /// The app's roles made from the system's colours, by their GTK names
+  /// (owner decision: the desktop app follows the system, whatever it is).
+  /// Every role is one of the system's colours or a mix of two of them, laid
+  /// out as the system's own apps are: the content on the view colour, the
+  /// sidebar and cards on the window colour. Null without the colours every
+  /// role needs.
+  static ApexColors? fromSystem(Map<String, Color> s) {
+    final view = s['theme_base_color'];
+    final window = s['theme_bg_color'];
+    final fg = s['theme_fg_color'];
+    final selection = s['theme_selected_bg_color'];
+    if (view == null || window == null || fg == null || selection == null) {
+      return null;
+    }
+    final text = s['theme_text_color'] ?? fg;
+    final border = s['borders'] ?? Color.lerp(window, fg, 0.2)!;
+    Color mix(Color a, Color b, double t) => Color.lerp(a.withAlpha(255), b.withAlpha(255), t)!;
+    final floating = mix(window, fg, 0.05);
+    return ApexColors(
+      window: view.withAlpha(255),
+      panel: window.withAlpha(255),
+      panelBorder: border.withAlpha(255),
+      hover: mix(window, fg, 0.06),
+      selected: mix(window, selection, 0.3),
+      floating: floating,
+      floatingSelected: mix(floating, selection, 0.3),
+      text: text.withAlpha(255),
+      muted: mix(text, view, 0.28),
+      capsule: view.withAlpha(255),
+      capsuleBorder: border.withAlpha(255),
+      circle: mix(window, fg, 0.1),
+      onCircle: fg.withAlpha(255),
+      filled: text.withAlpha(255),
+      onFilled: view.withAlpha(255),
+      hint: mix(text, view, 0.42),
+      accent: selection.withAlpha(255),
+      danger: (s['error_color'] ?? (view.computeLuminance() < 0.5 ? dark : light).danger).withAlpha(255),
+      online: (s['success_color'] ?? (view.computeLuminance() < 0.5 ? dark : light).online).withAlpha(255),
+    );
+  }
+
+  /// Dark or light, read from what is behind everything.
+  Brightness get brightness =>
+      window.computeLuminance() < 0.5 ? Brightness.dark : Brightness.light;
+
   /// Falls back by brightness, so a widget pumped without the app's theme
   /// still has its colours.
   static ApexColors of(BuildContext context) {

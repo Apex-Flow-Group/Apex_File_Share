@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import 'core/apex_core.dart';
@@ -5,6 +7,7 @@ import 'l10n/app_delegates.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'managers/permission_manager.dart';
 import 'mobile/screens/home_screen.dart';
+import 'platform/system_colors.dart';
 import 'screens/intro_screen.dart';
 import 'screens/splash_screen.dart';
 import 'services/desktop_notification_service.dart';
@@ -16,6 +19,8 @@ import 'utils/platform_detector.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // The system's colours arrive within a frame or two and stay current.
+  unawaited(SystemColors.instance.load());
   // runApp فوراً بدون أي await — السبلاش تظهر من أول فريم
   runApp(const _BootApp());
 }
@@ -27,17 +32,23 @@ class _BootApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: appLocalizationsDelegates,
-      theme: apexTheme(Brightness.light),
-      darkTheme: apexTheme(Brightness.dark),
-      themeMode: ThemeMode.system,
-      home: SplashScreen(
-        onInit: _initAll,
-        nextScreenBuilder: (s) => FileShareApp(settings: s),
-      ),
+    return ListenableBuilder(
+      listenable: SystemColors.instance,
+      builder: (context, _) {
+        final system = SystemColors.instance.palette;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          supportedLocales: const [Locale('ar'), Locale('en')],
+          localizationsDelegates: appLocalizationsDelegates,
+          theme: apexTheme(Brightness.light, system: system),
+          darkTheme: apexTheme(Brightness.dark, system: system),
+          themeMode: ThemeMode.system,
+          home: SplashScreen(
+            onInit: _initAll,
+            nextScreenBuilder: (s) => FileShareApp(settings: s),
+          ),
+        );
+      },
     );
   }
 
@@ -64,8 +75,9 @@ class FileShareApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: settings,
+      animation: Listenable.merge([settings, SystemColors.instance]),
       builder: (context, _) {
+        final system = SystemColors.instance.palette;
         return MaterialApp(
           onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
           debugShowCheckedModeBanner: false,
@@ -83,8 +95,8 @@ class FileShareApp extends StatelessWidget {
           },
           supportedLocales: const [Locale('ar'), Locale('en')],
           localizationsDelegates: appLocalizationsDelegates,
-          theme: apexTheme(Brightness.light),
-          darkTheme: apexTheme(Brightness.dark),
+          theme: apexTheme(Brightness.light, system: system),
+          darkTheme: apexTheme(Brightness.dark, system: system),
           themeMode: settings.themeMode,
           builder: (context, child) {
             DesktopNotificationService.instance.locale =

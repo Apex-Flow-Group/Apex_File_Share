@@ -15,6 +15,17 @@
 // ─── Clipboard channel name (must match Dart side) ────────────────────────────
 static const char kClipboardChannel[] = "com.apex.core/clipboard";
 
+// ─── System colours channel (must match lib/platform/system_colors.dart) ─────
+static const char kSystemColorsChannel[] = "com.apex.core/system_colors";
+
+// The theme's colours by their standard GTK names, which every GTK theme
+// defines and KDE fills from its own colour scheme.
+static const char* const kSystemColorNames[] = {
+    "theme_bg_color",          "theme_base_color",        "theme_fg_color",
+    "theme_text_color",        "theme_selected_bg_color", "theme_selected_fg_color",
+    "borders",                 "success_color",           "error_color",
+    nullptr};
+
 struct _MyApplication {
   GtkApplication parent_instance;
   char** dart_entrypoint_arguments;
@@ -23,9 +34,43 @@ struct _MyApplication {
   FlMethodChannel* clipboard_channel;
   gulong            clipboard_signal_id;
   GtkClipboard*     clipboard;
+
+  // The system's colours, read from the window's theme.
+  FlMethodChannel* colors_channel;
+  GtkWidget*       window;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
+
+// ─── System colours ──────────────────────────────────────────────────────────
+// Each colour as 0xAARRGGBB under its GTK name; a name the theme lacks is left out.
+static FlValue* read_system_colors(GtkWidget* widget) {
+  FlValue* map = fl_value_new_map();
+  GtkStyleContext* ctx = gtk_widget_get_style_context(widget);
+  for (int i = 0; kSystemColorNames[i] != nullptr; i++) {
+    GdkRGBA c;
+    if (!gtk_style_context_lookup_color(ctx, kSystemColorNames[i], &c)) {
+      continue;
+    }
+    auto byte = [](double v) {
+      return static_cast<int64_t>(CLAMP(v, 0.0, 1.0) * 255.0 + 0.5);
+    };
+    int64_t argb = (byte(c.alpha) << 24) | (byte(c.red) << 16) |
+                   (byte(c.green) << 8) | byte(c.blue);
+    fl_value_set_string_take(map, kSystemColorNames[i], fl_value_new_int(argb));
+  }
+  return map;
+}
+
+// The theme changed (the user picked other colours or another theme): the
+// app takes the new ones at once.
+static void on_style_updated(GtkWidget* widget, gpointer user_data) {
+  MyApplication* self = MY_APPLICATION(user_data);
+  if (!self->colors_channel) return;
+  g_autoptr(FlValue) colors = read_system_colors(widget);
+  fl_method_channel_invoke_method(self->colors_channel, "changed", colors,
+                                  nullptr, nullptr, nullptr);
+}
 
 // ─── Helper: temp file path ───────────────────────────────────────────────────
 static std::string make_temp_path(const char* prefix, const char* ext) {
@@ -247,6 +292,26 @@ static void my_application_activate(GApplication* application) {
       },
       self, nullptr);
 
+  // ── Set up system colours MethodChannel ───────────────────────────────────
+  self->window = GTK_WIDGET(window);
+  self->colors_channel = fl_method_channel_new(
+      messenger, kSystemColorsChannel, FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(
+      self->colors_channel,
+      [](FlMethodChannel*, FlMethodCall* call, gpointer user_data) {
+        MyApplication* self = MY_APPLICATION(user_data);
+        g_autoptr(FlMethodResponse) response = nullptr;
+        if (g_strcmp0(fl_method_call_get_name(call), "get") == 0) {
+          g_autoptr(FlValue) colors = read_system_colors(self->window);
+          response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
+        } else {
+          response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+        }
+        fl_method_call_respond(call, response, nullptr);
+      },
+      self, nullptr);
+  g_signal_connect(window, "style-updated", G_CALLBACK(on_style_updated), self);
+
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
@@ -291,6 +356,8 @@ static void my_application_shutdown(GApplication* application) {
     self->clipboard = nullptr;
   }
   g_clear_object(&self->clipboard_channel);
+  g_clear_object(&self->colors_channel);
+  self->window = nullptr;
 
   G_APPLICATION_CLASS(my_application_parent_class)->shutdown(application);
 }
@@ -315,6 +382,8 @@ static void my_application_init(MyApplication* self) {
   self->clipboard_channel    = nullptr;
   self->clipboard_signal_id  = 0;
   self->clipboard            = nullptr;
+  self->colors_channel       = nullptr;
+  self->window               = nullptr;
 }
 
 MyApplication* my_application_new() {
