@@ -307,6 +307,9 @@ class SendHttp {
           return SendOutcome.failed;
         }
         req.add(chunk);
+        // Waits for the socket: without it the whole file sits in memory and
+        // the bar reaches 100% before the receiver has taken anything.
+        await req.flush();
         sent += chunk.length;
         if (sent % progressStep < chunk.length || sent >= file.size) {
           report(sent);
