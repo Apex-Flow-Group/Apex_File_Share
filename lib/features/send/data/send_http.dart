@@ -203,8 +203,10 @@ class SendHttp {
       }
       return utf8.decode(bytes);
     } on TimeoutException {
+      ApexLogger.instance.log('SEND', 'The receiver sent no complete answer in time', LogLevel.warning);
       return null;
     } on FormatException {
+      ApexLogger.instance.log('SEND', 'The receiver answered with something that is not text', LogLevel.warning);
       return null;
     }
   }
@@ -345,7 +347,7 @@ class SendHttp {
       ApexLogger.instance.log('SEND', 'Upload failed: $e', LogLevel.error);
       try {
         req?.abort();
-      } catch (_) {}
+      } catch (_) {} // swallow-ok: the request is already dead; the failure that led here is logged above
       return SendOutcome.failed;
     } finally {
       await source?.close();

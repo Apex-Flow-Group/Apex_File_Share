@@ -151,10 +151,12 @@ class ShareFolderService {
       ApexLogger.instance.log('SHARE', '✅ Saved: $finalPath', LogLevel.success);
       return finalPath;
     } catch (e) {
-      await sink?.close().catchError((_) {});
+      await sink?.close().catchError((_) {}); // swallow-ok: close() fails again after a stream error; the first error is rethrown below
       try {
         await File(tempPath).delete();
-      } catch (_) {}
+      } catch (e2) {
+        ApexLogger.instance.log('SHARE', 'Could not delete the partial upload: $e2', LogLevel.warning);
+      }
       rethrow;
     }
   }

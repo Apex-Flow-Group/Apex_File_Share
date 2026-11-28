@@ -8,6 +8,7 @@ import '../../../core/protocol/apex_protocol.dart';
 import '../../../core/protocol/transfer_rules.dart';
 import '../../../core/text/clean_label.dart';
 import '../../../models/device.dart';
+import '../../../utils/apex_logger.dart';
 import '../../identity/caller.dart';
 import '../../identity/pin_store.dart';
 import '../logic/block_list.dart';
@@ -82,6 +83,7 @@ class ChatHttp {
     try {
       body = await _readJson(req);
     } on TimeoutException {
+      ApexLogger.instance.log('CHAT', 'The message body from $address stalled; closed without a reply', LogLevel.warning);
       return;
     }
     if (body == _tooLong) {
@@ -96,6 +98,7 @@ class ChatHttp {
     final text = cleanChatText(raw);
     final id = body is Map ? cleanDeviceId(body['id']) : null;
     if (address == null || body is! Map || text == null || id == null) {
+      ApexLogger.instance.log('CHAT', 'A message from $address was refused: not a valid message (400)', LogLevel.warning);
       await _reply(req, HttpStatus.badRequest, {'error': 'bad_message'});
       return;
     }
@@ -192,7 +195,7 @@ class ChatHttp {
     }
     try {
       return jsonDecode(utf8.decode(bytes));
-    } on FormatException {
+    } on FormatException { // swallow-ok: null is answered 400 bad_message by _message, which logs it
       return null;
     }
   }
@@ -205,8 +208,9 @@ class ChatHttp {
         ..headers.contentType = ContentType.json
         ..write(jsonEncode(body));
       await req.response.close();
-    } catch (_) {
-      // The sender is gone; nothing to tell.
+    } catch (e) {
+      // The sender may be gone, and there is nobody to tell; the log says why.
+      ApexLogger.instance.log('CHAT', 'Could not send the $status answer: $e', LogLevel.warning);
     }
   }
 }

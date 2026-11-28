@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/apex_logger.dart';
+
 /// Where the port of the last run is kept on this device.
 const lastPortKey = 'http_port';
 
@@ -14,8 +16,9 @@ Future<HttpServer> bindLastPort(SharedPreferences prefs, Future<HttpServer> Func
   if (last != null && last > 0 && last < 1 << 16) {
     try {
       return await bind(last);
-    } on SocketException {
+    } on SocketException catch (e) {
       // Taken: any free port below.
+      ApexLogger.instance.log('HTTP', 'The last port $last is taken, using any free port: $e', LogLevel.warning);
     }
   }
   final server = await bind(0);

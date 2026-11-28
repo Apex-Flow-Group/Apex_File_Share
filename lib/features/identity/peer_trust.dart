@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../../utils/apex_logger.dart';
 import 'fingerprint.dart';
 import 'self_signed.dart';
 
@@ -30,7 +31,8 @@ class PeerTrust {
     }
     try {
       _context.setTrustedCertificatesBytes(toPem('CERTIFICATE', certificate).codeUnits);
-    } on TlsException {
+    } on TlsException catch (e) {
+      ApexLogger.instance.log('IDENTITY', 'A peer certificate was refused by the TLS context: $e', LogLevel.warning);
       return false;
     }
     _added.add(fp);

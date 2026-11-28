@@ -39,7 +39,7 @@ class DiscoveryPacket {
     final Object? json;
     try {
       json = jsonDecode(text.substring(magic.length));
-    } on FormatException {
+    } on FormatException { // swallow-ok: a malformed datagram from the network is null by contract; logging each one would let any host flood the log
       return null;
     }
     if (json is! Map || json['version'] != ApexProtocol.version) {
@@ -89,7 +89,7 @@ class DiscoveryPacket {
     try {
       final der = base64.decode(value);
       return der.isEmpty || der.length > _certificateLimit ? null : der;
-    } on FormatException {
+    } on FormatException { // swallow-ok: a malformed datagram from the network is null by contract; logging each one would let any host flood the log
       return null;
     }
   }
@@ -105,7 +105,7 @@ class DiscoveryPacket {
     final Object? json;
     try {
       json = jsonDecode(text.substring(magic.length));
-    } on FormatException {
+    } on FormatException { // swallow-ok: a malformed datagram from the network is null by contract; logging each one would let any host flood the log
       return null;
     }
     if (json is! Map || json['version'] == ApexProtocol.version) {

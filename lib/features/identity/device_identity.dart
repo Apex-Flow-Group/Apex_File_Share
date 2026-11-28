@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import '../../platform/owner_only.dart';
+import '../../utils/apex_logger.dart';
 import 'fingerprint.dart';
 import 'self_signed.dart';
 
@@ -55,10 +56,12 @@ class DeviceIdentity {
       // Throws when the key does not belong to the certificate.
       identity.clientContext();
       return identity;
-    } on Exception {
+    } on Exception catch (e) {
+      ApexLogger.instance.log('IDENTITY', 'The stored identity could not be loaded: $e', LogLevel.warning);
       return null;
-    } on ArgumentError {
+    } on ArgumentError catch (e) {
       // What SecurityContext throws for a file with no key in it.
+      ApexLogger.instance.log('IDENTITY', 'The stored identity has no usable key: $e', LogLevel.warning);
       return null;
     }
   }

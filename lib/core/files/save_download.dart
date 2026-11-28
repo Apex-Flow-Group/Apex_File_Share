@@ -24,7 +24,7 @@ Future<String> saveDownload(
       await sink.addStream(body);
     } catch (_) {
       // close() fails too after a stream error; keep the first error.
-      await sink.close().catchError((_) {});
+      await sink.close().catchError((_) {}); // swallow-ok: close() fails again after a stream error; the first error is rethrown below
       rethrow;
     }
     await sink.close();

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/core_models.dart';
 import '../../../models/device.dart';
+import '../../../utils/apex_logger.dart';
 import '../../identity/fingerprint.dart';
 import '../../send/data/send_http.dart';
 import 'block_list.dart';
@@ -275,8 +276,9 @@ class ChatStore extends ChangeNotifier {
     SendOutcome outcome;
     try {
       outcome = await sendFilesNow!(m.undelivered, target, (n) => m.delivered = before + n);
-    } catch (_) {
+    } catch (e) {
       // A line never stays "sending": the send threw (a disk removed mid-read).
+      ApexLogger.instance.log('CHAT', 'Sending files failed: $e', LogLevel.error);
       outcome = SendOutcome.failed;
     }
     if (outcome == SendOutcome.sent) {

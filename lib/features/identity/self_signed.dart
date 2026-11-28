@@ -83,7 +83,7 @@ Uint8List? fromPem(String label, String pem) {
   }
   try {
     return base64.decode(match.group(1)!.replaceAll(RegExp(r'\s'), ''));
-  } on FormatException {
+  } on FormatException { // swallow-ok: a malformed PEM is null by contract, as when it has no block
     return null;
   }
 }

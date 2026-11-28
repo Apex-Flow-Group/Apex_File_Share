@@ -34,6 +34,7 @@ extension NearbyTransferConnection on NearbyTransfer {
         },
       );
     } catch (e) {
+      ApexLogger.instance.log('NEARBY', 'Connection request to $endpointId failed: $e', LogLevel.warning);
       _connectCompleters.remove(endpointId)?.complete(false);
       return false;
     }
@@ -50,7 +51,9 @@ extension NearbyTransferConnection on NearbyTransfer {
     if (!await door.mayConnect(endpointId, endpointName)) {
       try {
         await Nearby().rejectConnection(endpointId);
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('NEARBY', 'Could not reject the connection of $endpointId: $e', LogLevel.warning);
+      }
       return false;
     }
     await Nearby().acceptConnection(

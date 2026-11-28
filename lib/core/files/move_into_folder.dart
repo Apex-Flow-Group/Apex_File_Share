@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../../utils/apex_logger.dart';
+
 /// Moves [source] into [folder] as [name] without ever replacing what is there:
 /// an existing "report.txt" makes the new one "report_1.txt", then "report_2.txt".
 ///
@@ -15,7 +17,7 @@ Future<File> _move(File source, Directory folder, String name) async {
   final target = File(_freePath(folder.path, name));
   try {
     return await source.rename(target.path);
-  } on FileSystemException {
+  } on FileSystemException { // swallow-ok: a rename across drives fails by design; the copy below reports a real failure
     // Another drive: copy, then remove the source.
   }
   try {
@@ -29,8 +31,9 @@ Future<File> _move(File source, Directory folder, String name) async {
   }
   try {
     await source.delete();
-  } catch (_) {
+  } catch (e) {
     // The full copy is in place; a leftover source is only a temp file.
+    ApexLogger.instance.log('FILES', 'Could not remove the source after copying: $e', LogLevel.warning);
   }
   return target;
 }

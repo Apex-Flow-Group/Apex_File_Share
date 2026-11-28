@@ -3,6 +3,7 @@ import 'dart:io';
 
 import '../../models/device.dart';
 import '../../platform/owner_only.dart';
+import '../../utils/apex_logger.dart';
 import 'fingerprint.dart';
 
 /// The fingerprint each device id had when the user last accepted it (a chat,
@@ -43,7 +44,8 @@ class PinStore {
           }
         }
       }
-    } on Exception {
+    } on Exception catch (e) {
+      ApexLogger.instance.log('IDENTITY', 'The pin file could not be read, starting with none: $e', LogLevel.warning);
       read.clear();
     }
     // A pin made before the file was read is the newer answer.
@@ -78,7 +80,9 @@ class PinStore {
     }
     _pins[id] = fingerprint;
     // One write at a time, each with every pin so far.
-    return _writing = _writing.then((_) => _save()).catchError((_) {});
+    return _writing = _writing.then((_) => _save()).catchError((Object e) {
+      ApexLogger.instance.log('IDENTITY', 'The pins could not be saved: $e', LogLevel.error);
+    });
   }
 
   /// [id] accepted a send from this device holding [fingerprint]: pinned

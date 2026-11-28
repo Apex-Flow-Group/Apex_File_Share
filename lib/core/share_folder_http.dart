@@ -149,7 +149,9 @@ class ShareFolderHttp {
       try {
         req.response.statusCode = HttpStatus.internalServerError;
         await req.response.close();
-      } catch (_) {}
+      } catch (e2) {
+        ApexLogger.instance.log('SHARE_HTTP', 'Could not send the 500 answer: $e2', LogLevel.warning);
+      }
     }
     return true;
   }
@@ -225,7 +227,7 @@ class ShareFolderHttp {
     try {
       final json = jsonDecode(utf8.decode(bytes));
       return json is Map ? json : null;
-    } on FormatException {
+    } on FormatException { // swallow-ok: a body that is not JSON is null by contract; the caller answers 403 to it
       return null;
     }
   }
@@ -277,7 +279,9 @@ class ShareFolderHttp {
       // cannot take what it got for the whole file.
       try {
         await req.response.close();
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('SHARE_HTTP', 'Could not end the response of a revoked download: $e', LogLevel.warning);
+      }
       return;
     }
     await req.response.close();
@@ -330,15 +334,18 @@ class ShareFolderHttp {
       try {
         await DesktopNotificationService.instance
             .showShareUpload(savedName, fromDevice);
-      } catch (_) {
+      } catch (e) {
         // الإشعار غير ضروري لإكمال الرفع
+        ApexLogger.instance.log('SHARE_HTTP', 'The upload notification failed: $e', LogLevel.warning);
       }
 
       ApexLogger.instance.log('SHARE_HTTP',
           '⬆ Upload: $savedName from $fromDevice', LogLevel.success);
     } on UploadSizeMismatch {
+      ApexLogger.instance.log('SHARE_HTTP', 'Upload from $fromDevice refused: size differs from Content-Length (400)', LogLevel.warning);
       await _json(req, HttpStatus.badRequest, {'error': 'size'});
     } on _Revoked {
+      ApexLogger.instance.log('SHARE_HTTP', 'Upload from $fromDevice stopped: access was revoked (403)', LogLevel.warning);
       await _json(req, HttpStatus.forbidden, {'error': 'not_allowed'});
     } catch (e) {
       ApexLogger.instance
@@ -381,8 +388,9 @@ class ShareFolderHttp {
         ..headers.contentType = ContentType.json
         ..write(jsonEncode(body));
       await req.response.close();
-    } catch (_) {
-      // The device is gone; nothing to tell.
+    } catch (e) {
+      // The device may be gone, and there is nobody to tell; the log says why.
+      ApexLogger.instance.log('SHARE_HTTP', 'Could not send the $status answer: $e', LogLevel.warning);
     }
   }
 

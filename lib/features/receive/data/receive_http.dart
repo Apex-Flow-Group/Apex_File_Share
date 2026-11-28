@@ -124,12 +124,14 @@ class ReceiveHttp {
     try {
       text = await _readLimited(req, TransferRules.offerBodyLimit);
     } on TimeoutException {
+      ApexLogger.instance.log('RECEIVE', 'The offer body from $address stalled; closed without a reply', LogLevel.warning);
       // Leaving the body loop early closes the connection; a stalled sender
       // is not reading, so it gets no answer.
       return;
     }
     final offer = address == null || text == null ? null : _parseOffer(text, address, fingerprint);
     if (offer == null) {
+      ApexLogger.instance.log('RECEIVE', 'An offer from $address was refused: not a valid offer (400)', LogLevel.warning);
       await _reply(req, HttpStatus.badRequest, {'error': 'bad_offer'});
       return;
     }
@@ -247,7 +249,7 @@ class ReceiveHttp {
         senderName: senderName.isEmpty ? address : senderName,
         files: parsed,
       );
-    } on FormatException {
+    } on FormatException { // swallow-ok: null is answered 400 bad_offer by _offer, which logs it
       return null;
     }
   }
@@ -363,12 +365,16 @@ class ReceiveHttp {
   Future<void> _discard(IOSink? sink, File temp) async {
     try {
       await sink?.close();
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('RECEIVE', 'Could not close the download file: $e', LogLevel.warning);
+    }
     try {
       if (await temp.exists()) {
         await temp.delete();
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('RECEIVE', 'Could not delete the partial download: $e', LogLevel.warning);
+    }
   }
 
   void _finished(OfferedFile file, String path, HttpRequest req, Upload upload) {
@@ -417,7 +423,7 @@ class ReceiveHttp {
     }
     try {
       return utf8.decode(bytes);
-    } on FormatException {
+    } on FormatException { // swallow-ok: null is answered 400 bad_offer by _offer, which logs it
       return null;
     }
   }
@@ -430,8 +436,9 @@ class ReceiveHttp {
         ..headers.contentType = ContentType.json
         ..write(jsonEncode(body));
       await req.response.close();
-    } catch (_) {
-      // The sender is gone; nothing to tell.
+    } catch (e) {
+      // The sender may be gone, and there is nobody to tell; the log says why.
+      ApexLogger.instance.log('RECEIVE', 'Could not send the $status answer: $e', LogLevel.warning);
     }
   }
 }

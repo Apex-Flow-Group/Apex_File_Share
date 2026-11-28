@@ -385,11 +385,17 @@ class ApexCore {
         req.response.statusCode = HttpStatus.notFound;
         await req.response.close();
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log(
+          'HTTP',
+          '${req.method} ${req.uri.path} from ${req.connectionInfo?.remoteAddress.address} failed, answering 500: $e',
+          LogLevel.error);
       try {
         req.response.statusCode = HttpStatus.internalServerError;
         await req.response.close();
-      } catch (_) {}
+      } catch (e2) {
+        ApexLogger.instance.log('HTTP', 'Could not send the 500 answer: $e2', LogLevel.warning);
+      }
     }
   }
 
@@ -477,7 +483,9 @@ class ApexCore {
       }
       try {
         await temp.delete();
-      } catch (_) {}
+      } catch (e) {
+        ApexLogger.instance.log('RECEIVE', 'Could not delete the temp file after saving: $e', LogLevel.warning);
+      }
       return saved;
     }
     final folder = Directory(await PathUtils.getCategoryPath(name));
@@ -567,7 +575,9 @@ class ApexCore {
           }
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('CORE', 'Could not list the network interfaces, using loopback: $e', LogLevel.warning);
+    }
     return '127.0.0.1';
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../../platform/owner_only.dart';
+import '../../../utils/apex_logger.dart';
 import '../../identity/fingerprint.dart';
 
 /// Who sent a received file: the name it gave when the file arrived, when,
@@ -52,7 +53,8 @@ class SenderLog {
           }
         }
       }
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('RECEIVE', 'The sender log could not be read, starting empty: $e', LogLevel.warning);
       read.clear();
     }
     // A line made before the file was read is the newer one.
@@ -112,7 +114,7 @@ class SenderLog {
   static int _sizeOf(String path) {
     try {
       return File(path).lengthSync();
-    } on FileSystemException {
+    } on FileSystemException { // swallow-ok: a missing file has size -1, which no line matches
       return -1;
     }
   }
@@ -134,7 +136,9 @@ class SenderLog {
 
   void _save() {
     // One write at a time, each with every line so far.
-    _writing = _writing.then((_) => _write()).catchError((_) {});
+    _writing = _writing.then((_) => _write()).catchError((Object e) {
+      ApexLogger.instance.log('RECEIVE', 'The sender log could not be saved: $e', LogLevel.warning);
+    });
   }
 
   Future<void> _write() async {

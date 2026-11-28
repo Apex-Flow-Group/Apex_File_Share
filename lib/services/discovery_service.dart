@@ -129,7 +129,8 @@ class DiscoveryService {
       if (socket == null) return;
       try {
         if (_send(socket, data, to, port) > 0) return;
-      } catch (_) {
+      } catch (e) {
+        ApexLogger.instance.log('DISCOVERY', 'Could not send the announcement to ${to.address}: $e', LogLevel.warning);
         return;
       }
       await Future<void>.delayed(_sendRetryWait);
@@ -191,7 +192,11 @@ class DiscoveryService {
       final device = DiscoveryPacket.decode(text, from: from, selfId: self.id) ??
           DiscoveryPacket.otherVersion(text, from: from, selfId: self.id);
       if (device != null) _deviceFoundController.add(device);
-    } catch (_) {}
+    } on FormatException { // swallow-ok: a datagram that is not UTF-8 is not ours; any host can send one, so a log would flood
+      return;
+    } catch (e) {
+      ApexLogger.instance.log('DISCOVERY', 'Could not read a received announcement: $e', LogLevel.warning);
+    }
   }
 
   Future<void> _broadcast() async {
@@ -201,7 +206,8 @@ class DiscoveryService {
     List<NetworkInterface> ifaces;
     try {
       ifaces = await _listInterfaces();
-    } catch (_) {
+    } catch (e) {
+      ApexLogger.instance.log('DISCOVERY', 'Could not list the network interfaces: $e', LogLevel.warning);
       ifaces = const [];
     }
     final ips = [

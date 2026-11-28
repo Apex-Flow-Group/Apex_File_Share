@@ -149,12 +149,16 @@ extension NearbyTransferReceive on NearbyTransfer {
       if (f != null && await f.exists()) {
         await f.delete();
       }
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('NEARBY', 'Could not delete a cancelled payload file: $e', LogLevel.warning);
+    }
   }
 
   Future<void> _cancelPayload(int id) async {
     try {
       await Nearby().cancelPayload(id);
-    } catch (_) {}
+    } catch (e) {
+      ApexLogger.instance.log('NEARBY', 'Could not cancel payload $id: $e', LogLevel.warning);
+    }
   }
 }
