@@ -79,34 +79,19 @@ void main() {
   });
 
   group('Linux', () {
-    const scripts = ['install_linux.sh', 'launch_linux.sh'];
     // The app uses UDP 45679 for discovery and a random TCP port for transfer.
     const appPorts = {'45679/udp'};
 
-    test('scripts open only the ports the app really uses', () {
-      final opened = <String>[];
-      for (final s in scripts) {
-        for (final m in RegExp(r'--add-port=(\d+/(?:tcp|udp))').allMatches(_read(s))) {
-          if (!appPorts.contains(m.group(1))) {
-            opened.add('$s: ${m.group(1)}');
-          }
-        }
-      }
-      expect(opened, isEmpty,
+    test('the Fedora package opens only the ports the app really uses', () {
+      final service = _read('packaging/fedora/apexsender-firewalld.xml');
+      final opened = {
+        for (final m in RegExp(r'<port protocol="(\w+)" port="(\d+)"').allMatches(service))
+          '${m.group(2)}/${m.group(1)}',
+      };
+      expect(opened, isNotEmpty);
+      expect(opened.difference(appPorts), isEmpty,
           reason: 'These ports are opened permanently but the app never listens on them; '
               'any other program on the machine gets them for free.');
-    });
-
-    test('uninstall closes every port the install opened', () {
-      final added = RegExp(r'--add-port=(\S+)')
-          .allMatches(scripts.map(_read).join('\n'))
-          .map((m) => m.group(1))
-          .toSet();
-      final removed = RegExp(r'--remove-port=(\S+)')
-          .allMatches(_read('uninstall_linux.sh'))
-          .map((m) => m.group(1))
-          .toSet();
-      expect(added.difference(removed), isEmpty);
     });
   });
 

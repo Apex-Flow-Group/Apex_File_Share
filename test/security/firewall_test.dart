@@ -23,18 +23,11 @@ void main() {
             'their removal in the uninstaller.');
   });
 
-  test('every ufw rule the Linux install adds, uninstall deletes', () {
-    final added = RegExp(r'ufw allow (\S+)')
-        .allMatches(_read('install_linux.sh') + _read('launch_linux.sh'))
-        .map((m) => m.group(1))
-        .toSet();
-    final deleted =
-        RegExp(r'ufw delete allow (\S+)').allMatches(_read('uninstall_linux.sh')).map((m) => m.group(1)).toSet();
-    expect(added.difference(deleted), isEmpty);
-  });
-
-  test('the launch script for development leaves the firewall alone', () {
-    expect(RegExp(r'firewall-cmd|ufw').hasMatch(_read('launch_linux.sh')), isFalse,
-        reason: 'It opened ports permanently with sudo on every run.');
+  test('every firewalld service the Fedora package adds, its removal takes away', () {
+    final spec = _read('packaging/fedora/apexsender.spec');
+    final added = RegExp(r'--add-service=(\S+)').allMatches(spec).map((m) => m.group(1)).toSet();
+    final removed = RegExp(r'--remove-service=(\S+)').allMatches(spec).map((m) => m.group(1)).toSet();
+    expect(added, isNotEmpty);
+    expect(added.difference(removed), isEmpty);
   });
 }
