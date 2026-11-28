@@ -187,7 +187,7 @@ do_build_windows() {
     [ -f "$exe" ] || { echo -e "${R}❌ لم يُبنَ file_share_app.exe${N}"; return 1; }
     local iscc="${ISCC:-/c/Program Files (x86)/Inno Setup 6/ISCC.exe}"
     if [ ! -f "$iscc" ]; then
-        echo -e "${R}❌ Inno Setup غير مثبّت: https://jrsoftware.org/isdl.php${N}"
+        echo -e "${R}❌ لم يُعثر على Inno Setup 6 في $iscc. ثبّته من https://jrsoftware.org/isdl.php أو ضع مساره في ISCC${N}"
         return 1
     fi
     "$iscc" windows/apex_file_share_setup.iss >/dev/null || { echo -e "${R}❌ فشل بناء المثبّت${N}"; return 1; }
@@ -200,7 +200,7 @@ do_build_windows() {
     if cmp -s "$installed" "build/windows/x64/runner/Release/data/app.so"; then
         echo -e "${G}✅ ثُبّت $VERSION_NAME+$VERSION_CODE، والكود المثبّت مطابق للبناء${N}"
     else
-        echo -e "${R}❌ الكود المثبّت لا يطابق البناء: أغلق التطبيق وأعد المحاولة${N}"
+        echo -e "${R}❌ app.so في $installed غير موجود أو لا يطابق البناء. إن كان التطبيق مفتوحاً فأغلقه وأعد المحاولة${N}"
         return 1
     fi
 }
