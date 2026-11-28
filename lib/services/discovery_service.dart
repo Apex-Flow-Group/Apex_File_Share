@@ -13,6 +13,10 @@ import '../core/text/clean_label.dart';
 import '../models/device.dart';
 import '../utils/apex_logger.dart';
 
+/// How a datagram leaves: [RawDatagramSocket.send], or a test's stand-in.
+typedef SendDatagram = int Function(
+    RawDatagramSocket socket, List<int> data, InternetAddress to, int port);
+
 class DiscoveryService {
   final _deviceFoundController = StreamController<Device>.broadcast();
   final _deviceLostController = StreamController<String>.broadcast();
@@ -28,15 +32,23 @@ class DiscoveryService {
     this.port = defaultPort,
     this.interval = const Duration(seconds: 2),
     Future<List<NetworkInterface>> Function()? listInterfaces,
-  }) : _listInterfaces = listInterfaces ?? _systemInterfaces;
+    @visibleForTesting SendDatagram? send,
+  })  : _listInterfaces = listInterfaces ?? _systemInterfaces,
+        _send = send ?? _socketSend;
   static bool _defaultFalse() => false;
   static Future<List<NetworkInterface>> _systemInterfaces() =>
       NetworkInterface.list(includeLinkLocal: false, type: InternetAddressType.IPv4);
+  static int _socketSend(RawDatagramSocket s, List<int> data, InternetAddress to, int port) =>
+      s.send(data, to, port);
 
   static const int defaultPort = 45679;
   final int port;
   final Duration interval;
   final Future<List<NetworkInterface>> Function() _listInterfaces;
+  final SendDatagram _send;
+
+  /// Every datagram waits here for the one before it.
+  Future<void> _sends = Future.value();
 
   // Nearby (Android phone ↔ phone)
   bool _nearbyAdvertising = false;
@@ -87,9 +99,41 @@ class DiscoveryService {
     final d = _localDevice;
     if (d == null || _udpSocket == null || device.ip.isEmpty) return;
     final data = utf8.encode(DiscoveryPacket.encode(d, shareEnabled: isShareEnabled()));
-    try {
-      _udpSocket!.send(data, InternetAddress(device.ip), port);
-    } catch (_) {}
+    unawaited(_sendAll(data, [device.ip]));
+  }
+
+  /// Sends [data] to each address in turn, after any send already waiting.
+  ///
+  /// A socket that cannot take a datagram yet returns 0 from send(), and the
+  /// datagram is not sent (Dart's contract). On Windows that is every send
+  /// while the one before it is still on its way (`HasPendingWrite()` in
+  /// Dart's eventhandler_win.cc), so sent back to back only the first
+  /// address got the packet: 255.255.255.255, which Windows sends on one
+  /// network only. Each one is now tried again until the socket takes it.
+  Future<void> _sendAll(List<int> data, List<String> addresses) {
+    final run = _sends.then((_) async {
+      for (final addr in addresses) {
+        await _sendUntilTaken(data, InternetAddress(addr));
+      }
+    });
+    _sends = run.catchError((Object _) {});
+    return run;
+  }
+
+  static const _sendTries = 20;
+  static const _sendRetryWait = Duration(milliseconds: 5);
+
+  Future<void> _sendUntilTaken(List<int> data, InternetAddress to) async {
+    for (var i = 0; i < _sendTries; i++) {
+      final socket = _udpSocket;
+      if (socket == null) return;
+      try {
+        if (_send(socket, data, to, port) > 0) return;
+      } catch (_) {
+        return;
+      }
+      await Future<void>.delayed(_sendRetryWait);
+    }
   }
 
   // ─── UDP Broadcast (works on all platforms) ───────────────────────────────
@@ -165,13 +209,7 @@ class DiscoveryService {
         for (final a in iface.addresses)
           if (a.type == InternetAddressType.IPv4) a.address,
     ];
-    for (final addr in broadcastTargets(ips)) {
-      final socket = _udpSocket;
-      if (socket == null) return;
-      try {
-        socket.send(data, InternetAddress(addr), port);
-      } catch (_) {}
-    }
+    await _sendAll(data, broadcastTargets(ips));
   }
 
   /// 255.255.255.255 leaves on the network the system picks; each network
